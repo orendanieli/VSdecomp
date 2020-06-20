@@ -27,7 +27,7 @@ test_that("variance components are correct", {
 #the app se is not converge to the emp se
 test_that("SE of the between component is correct", {
   B <- 1000
-  n <- 1000
+  n <- 10000
   bet_vec <- rep(NA, B)
   for(i in 1:B){
     dat <- gen_data(n)
