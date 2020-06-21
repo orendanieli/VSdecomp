@@ -24,7 +24,6 @@ test_that("variance components are correct", {
                 abs(theo_between - between.var(ss)) < 0.01)
 })
 
-#the app se is not converge to the emp se
 test_that("SE of the between component is correct", {
   B <- 1000
   n <- 10000
@@ -42,5 +41,25 @@ test_that("SE of the between component is correct", {
                      x = dat$x,
                      wgt = dat$wgt)
   app_se <- sqrt(var_between.var(ss))
-  expect_true(abs(app_se - emp_se) / app_se < 0.1)
+  expect_true(abs(app_se - emp_se) / app_se < 0.05)
+})
+
+test_that("SE of the within component is correct", {
+  B <- 1000
+  n <- 10000
+  with_vec <- rep(NA, B)
+  for(i in 1:B){
+    dat <- gen_data(n)
+    ss <- suf_stat.var(y = dat$y,
+                       x = dat$x,
+                       wgt = dat$wgt)
+    with_vec[i] <- within.var(ss)
+  }
+  emp_se <- sd(with_vec)
+  dat <- gen_data(n)
+  ss <- suf_stat.var(y = dat$y,
+                     x = dat$x,
+                     wgt = dat$wgt)
+  app_se <- sqrt(var_within.var(ss))
+  expect_true(abs(app_se - emp_se) / app_se < 0.05)
 })

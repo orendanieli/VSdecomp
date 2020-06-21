@@ -17,6 +17,7 @@ suf_stat.var <- function(y, x, wgt = rep(1, length(y))){
   sum_w <- sum(wgt)
   ss$p_g <- unlist(lapply(splitted_d, function(g){sum(g$wgt) / sum_w}))
   ss$sum_p_i2_g <- unlist(lapply(splitted_d, function(g){sum(g$wgt^2) / sum(g$wgt)^2}))
+  ss$sum_p_i2 <- sum(wgt^2) / sum_w^2 #this statistics is at the sample level
   ss$sigma2_g <- ss$mu2_g - ss$mu_g^2
   ss$var_mu_g <- ss$sigma2_g * ss$sum_p_i2_g
   ss$var_sigma2_g <- with(ss, sum_p_i2_g * (mu4_g - mu2_g^2 + 4*sigma2_g*mu_g^2 - 4*mu_g*(mu3_g - mu_g*mu2_g)))
@@ -33,8 +34,9 @@ between.var <- function(ss){
 
 
 var_between.var <- function(ss){
+  #extract sample level statistics
+  sum_p_i2 <- ss$sum_p_i2[1]
   mu <- with(ss, sum(mu_g * p_g))
-  sum_p_i2 <- sum(ss$sum_p_i2_g) #check if this is o.k
   A_g <- with(ss, 2*p_g*(mu_g - mu))
   B_g <- with(ss, mu_g^2 - 2*mu*mu_g)
   res <- sum(A_g^2 * ss$var_mu_g)
@@ -48,8 +50,10 @@ var_between.var <- function(ss){
   return(res)
 }
 
-#this wasnt tested yet
+
 var_within.var <- function(ss){
+  #extract sample level statistics
+  sum_p_i2 <- ss$sum_p_i2[1]
   res <- with(ss, sum(var_sigma2_g * p_g^2))
   B_mat <- with(ss, var_sigma2_g %*% t(var_sigma2_g))
   p_mat <- with(ss, p_g %*% t(p_g))
@@ -58,5 +62,15 @@ var_within.var <- function(ss){
   p_mat <- -1*p_mat
   diag(p_mat) <- -1*diag(p_mat)
   res <- res + sum(p_mat * B_mat) * sum_p_i2
+  return(res)
+}
+
+var_decomp <- function(y, x, wgt = rep(1, length(y))){
+  S <- suf_stat.var(y, x, wgt)
+  res <- c(total = wtd.var(y, wgt),
+           between = between.var(S),
+           betweed_sd = sqrt(var_between.var(S)),
+           within = within.var(S),
+           within_sd = sqrt(var_within.var(S)))
   return(res)
 }
