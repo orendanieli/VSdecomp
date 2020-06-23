@@ -1,15 +1,19 @@
-n <- 30000
-wage_men <- rnorm(n/3, 0, 1)
-wage_women <- rnorm(2*n/3, 1, 1)
-w_men <- rep(1, n/2)
-w_women <- rep(1, n/2)
-theo_within <- 1
-theo_between <- 2/9
-S <- suf_stat.var(y = c(wage_women, wage_men),
-                   x = c(rep("women", 2*n/3), rep("men", n/3)),
-                   wgt = c(w_women, w_men))
+n <- 100
+year = c()
+y <- c()
+x = c()
+for(v in 1996:2000){
+  wage_men <- rnorm(n, 0, 1)
+  wage_women <- rnorm(n, 1, 1)
+  y = c(y, c(wage_men, wage_women))
+  x = c(x, c(rep("women", n), rep("men", n)))
+  year = c(year, rep(v, 2*n))
+}
 
-between.var(S)
-var_between.var(S)
+X = matrix(x, ncol = 1)
 
-S = data.frame()
+bla <- vs_decomp(y = y,
+                 X = X,
+                 moment = "variance",
+                 year = year)
+bla

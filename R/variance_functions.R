@@ -1,7 +1,7 @@
 #' Calculates sufficient statistics for the variance decomposition
 #'
 #'
-#' @importFrom Hmisc wtd.mean wtd.var
+#' @importFrom Hmisc wtd.mean 
 suf_stat.var <- function(y, x, wgt = rep(1, length(y))){
   d <- data.frame(y, x, wgt)
   d$x <- as.factor(d$x)
@@ -67,10 +67,13 @@ var_within.var <- function(ss){
 
 var_decomp <- function(y, x, wgt = rep(1, length(y))){
   S <- suf_stat.var(y, x, wgt)
-  res <- c(total = wtd.var(y, wgt),
-           between = between.var(S),
-           betweed_sd = sqrt(var_between.var(S)),
+  res <- c(between = between.var(S),
            within = within.var(S),
+           betweed_sd = sqrt(var_between.var(S)),
            within_sd = sqrt(var_within.var(S)))
   return(res)
+}
+
+wtd_var <- function(y, wgt){
+  return(wtd.mean(y^2, wgt) - wtd.mean(y, wgt)^2)
 }
