@@ -4,7 +4,13 @@
 \alias{vs_decomp}
 \title{Variance and Skewness Decomposition}
 \usage{
-vs_decomp(y, X, wgt = rep(1, length(y)), moment = "skewness", year = NULL)
+vs_decomp(
+  y,
+  X,
+  wgt = rep(1, length(y)),
+  moment = "skewness",
+  year = rep(1, length(y))
+)
 }
 \arguments{
 \item{y}{an outcome vector (must be numeric without NA's).}
