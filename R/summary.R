@@ -3,8 +3,10 @@ summary.var_decomp <- function(object, r = 3){
   cat("Moment:", object$moment)
   n <- nrow(comp)
   if(n > 1){
+    cat("\n", "\n","Number of Observations:", "\n")
+    print(object$N)
     comp_var <- object$components_sd^2
-    cat("\n", "\n","Baseline:", "\n")
+    cat("\n","Baseline:", "\n")
     base_comp <- comp[1, ,drop = F]
     print(round(base_comp, r))
     cat("\n", 

@@ -20,22 +20,27 @@ vs_decomp <- function(y,
     if(ncol(X) > 1)
       stop("currently, variance decomposition is only available for one variable")
     year_val <- unique(year)
+    n <- length(year_val)
     #initilize output
-    components <- matrix(NA, nrow = length(year_val), ncol = 2,
+    components <- matrix(NA, nrow = n, ncol = 2,
                      dimnames = list(as.character(year_val), c("between", "within")))
-    components_sd <- matrix(NA, nrow = length(year_val), ncol = 2,
+    components_sd <- matrix(NA, nrow = n, ncol = 2,
                      dimnames = list(as.character(year_val), c("between_sd", "within_sd")))
+    N <- rep(NA, n)
+    names(N) <- as.character(year_val)
     i <- 1
     for(v in year_val){
       ind <- year == v
       tmp <- var_decomp(y[ind], X[ind, ], wgt[ind])
       components[i,] <- tmp[1:2]
       components_sd[i,] <- tmp[3:4]
+      N[i] <- sum(ind)
       i <- i + 1
     }
     output <- list(moment = moment,
                    components = components,
-                   components_sd = components_sd)
+                   components_sd = components_sd,
+                   N = N)
     class(output) <- "var_decomp"
   }
   return(output)

@@ -1,10 +1,10 @@
-n <- 100
+n <- 5000
 year = c()
 y <- c()
 x = c()
-for(v in 1996:2000){
-  wage_men <- rnorm(n, 0, 1)
-  wage_women <- rnorm(n, 1, 1)
+for(v in 1996:2002){
+  wage_men <- rnorm(n, mean = 1.5 + (v - 1998) / 4, sd = 1 + (v - 1998) / 4)
+  wage_women <- rnorm(n, mean = 1, sd = 1 )
   y = c(y, c(wage_men, wage_women))
   x = c(x, c(rep("women", n), rep("men", n)))
   year = c(year, rep(v, 2*n))
@@ -12,8 +12,9 @@ for(v in 1996:2000){
 
 X = matrix(x, ncol = 1)
 
-bla <- vs_decomp(y = y,
+tmp <- vs_decomp(y = y,
                  X = X,
                  moment = "variance",
                  year = year)
-bla
+plot(tmp)
+summary(tmp)
