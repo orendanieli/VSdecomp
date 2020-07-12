@@ -2,7 +2,7 @@
 #'
 #'
 #' @importFrom Hmisc wtd.mean 
-suf_stat.var <- function(y, x, wgt = rep(1, length(y))){
+suf_stat <- function(y, x, wgt = rep(1, length(y))){
   d <- data.frame(y, x, wgt)
   d$x <- as.factor(d$x)
   splitted_d <- split(d, d$x)
@@ -17,10 +17,13 @@ suf_stat.var <- function(y, x, wgt = rep(1, length(y))){
   sum_w <- sum(wgt)
   ss$p_g <- unlist(lapply(splitted_d, function(g){sum(g$wgt) / sum_w}))
   ss$sum_p_i2_g <- unlist(lapply(splitted_d, function(g){sum(g$wgt^2) / sum(g$wgt)^2}))
-  ss$sum_p_i2 <- sum(wgt^2) / sum_w^2 #this statistics is at the sample level
   ss$sigma2_g <- ss$mu2_g - ss$mu_g^2
   ss$var_mu_g <- ss$sigma2_g * ss$sum_p_i2_g
   ss$var_sigma2_g <- with(ss, sum_p_i2_g * (mu4_g - mu2_g^2 + 4*sigma2_g*mu_g^2 - 4*mu_g*(mu3_g - mu_g*mu2_g)))
+  #add sample level statistics
+  ss$sum_p_i2 <- sum(wgt^2) / sum_w^2 
+  ss$mu1 <- with(ss, sum(mu_g * p_g))
+  ss$sigma2 <- wtd_var(y, wgt)
   return(ss)
 }
 
@@ -36,7 +39,7 @@ between.var <- function(ss){
 var_between.var <- function(ss){
   #extract sample level statistics
   sum_p_i2 <- ss$sum_p_i2[1]
-  mu <- with(ss, sum(mu_g * p_g))
+  mu <- ss$mu1[1]
   A_g <- with(ss, 2*p_g*(mu_g - mu))
   B_g <- with(ss, mu_g^2 - 2*mu*mu_g)
   res <- sum(A_g^2 * ss$var_mu_g)
@@ -66,7 +69,7 @@ var_within.var <- function(ss){
 }
 
 var_decomp <- function(y, x, wgt = rep(1, length(y))){
-  S <- suf_stat.var(y, x, wgt)
+  S <- suf_stat(y, x, wgt)
   res <- c(between = between.var(S),
            within = within.var(S),
            betweed_sd = sqrt(var_between.var(S)),

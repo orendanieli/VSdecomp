@@ -17,7 +17,7 @@ test_that("variance components are correct", {
   dat <- gen_data(10000)
   theo_within <- 1
   theo_between <- 2/9
-  ss <- suf_stat.var(y = dat$y,
+  ss <- suf_stat(y = dat$y,
                      x = dat$x,
                      wgt = dat$wgt)
   expect_true(abs(theo_within - within.var(ss)) < 0.01 & 
@@ -30,14 +30,14 @@ test_that("SE of the between component is correct", {
   bet_vec <- rep(NA, B)
   for(i in 1:B){
     dat <- gen_data(n)
-    ss <- suf_stat.var(y = dat$y,
+    ss <- suf_stat(y = dat$y,
                        x = dat$x,
                        wgt = dat$wgt)
     bet_vec[i] <- between.var(ss)
   }
   emp_se <- sd(bet_vec)
   dat <- gen_data(n)
-  ss <- suf_stat.var(y = dat$y,
+  ss <- suf_stat(y = dat$y,
                      x = dat$x,
                      wgt = dat$wgt)
   app_se <- sqrt(var_between.var(ss))
@@ -50,14 +50,14 @@ test_that("SE of the within component is correct", {
   with_vec <- rep(NA, B)
   for(i in 1:B){
     dat <- gen_data(n)
-    ss <- suf_stat.var(y = dat$y,
+    ss <- suf_stat(y = dat$y,
                        x = dat$x,
                        wgt = dat$wgt)
     with_vec[i] <- within.var(ss)
   }
   emp_se <- sd(with_vec)
   dat <- gen_data(n)
-  ss <- suf_stat.var(y = dat$y,
+  ss <- suf_stat(y = dat$y,
                      x = dat$x,
                      wgt = dat$wgt)
   app_se <- sqrt(var_within.var(ss))
