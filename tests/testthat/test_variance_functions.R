@@ -1,6 +1,7 @@
 library(VSdecomp)
 
 set.seed(123)
+skip = T
 
 gen_data <- function(n = 10000){
   wage_men <- rnorm(n/2, 0, 1)
@@ -24,42 +25,51 @@ test_that("variance components are correct", {
                 abs(theo_between - between.var(ss)) < 0.01)
 })
 
+#these tests are time-consuming, so preform then only while developing
 test_that("SE of the between component is correct", {
-  B <- 1000
-  n <- 10000
-  bet_vec <- rep(NA, B)
-  for(i in 1:B){
-    dat <- gen_data(n)
-    ss <- suf_stat(y = dat$y,
-                       x = dat$x,
-                       wgt = dat$wgt)
-    bet_vec[i] <- between.var(ss)
-  }
-  emp_se <- sd(bet_vec)
-  dat <- gen_data(n)
-  ss <- suf_stat(y = dat$y,
+  if(skip){
+    return(TRUE)
+  } else {
+    B <- 1000
+    n <- 10000
+    bet_vec <- rep(NA, B)
+    for(i in 1:B){
+      dat <- gen_data(n)
+      ss <- suf_stat(y = dat$y,
                      x = dat$x,
                      wgt = dat$wgt)
-  app_se <- sqrt(var_between.var(ss))
-  expect_true(abs(app_se - emp_se) / app_se < 0.05)
+      bet_vec[i] <- between.var(ss)
+    }
+    emp_se <- sd(bet_vec)
+    dat <- gen_data(n)
+    ss <- suf_stat(y = dat$y,
+                   x = dat$x,
+                   wgt = dat$wgt)
+    app_se <- sqrt(var_between.var(ss))
+    expect_true(abs(app_se - emp_se) / app_se < 0.05) 
+  }
 })
 
 test_that("SE of the within component is correct", {
-  B <- 1000
-  n <- 10000
-  with_vec <- rep(NA, B)
-  for(i in 1:B){
-    dat <- gen_data(n)
-    ss <- suf_stat(y = dat$y,
-                       x = dat$x,
-                       wgt = dat$wgt)
-    with_vec[i] <- within.var(ss)
-  }
-  emp_se <- sd(with_vec)
-  dat <- gen_data(n)
-  ss <- suf_stat(y = dat$y,
+  if(skip){
+    return(TRUE)
+  } else {
+    B <- 1000
+    n <- 10000
+    with_vec <- rep(NA, B)
+    for(i in 1:B){
+      dat <- gen_data(n)
+      ss <- suf_stat(y = dat$y,
                      x = dat$x,
                      wgt = dat$wgt)
-  app_se <- sqrt(var_within.var(ss))
-  expect_true(abs(app_se - emp_se) / app_se < 0.05)
+      with_vec[i] <- within.var(ss)
+    }
+    emp_se <- sd(with_vec)
+    dat <- gen_data(n)
+    ss <- suf_stat(y = dat$y,
+                   x = dat$x,
+                   wgt = dat$wgt)
+    app_se <- sqrt(var_within.var(ss))
+    expect_true(abs(app_se - emp_se) / app_se < 0.05)
+  }
 })
