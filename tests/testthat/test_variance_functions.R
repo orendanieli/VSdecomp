@@ -25,7 +25,7 @@ test_that("variance components are correct", {
                 abs(theo_between - between.var(ss)) < 0.01)
 })
 
-#these tests are time-consuming, so preform then only while developing
+#these tests are time-consuming, so preform them only while developing
 test_that("SE of the between component is correct", {
   if(skip){
     return(TRUE)

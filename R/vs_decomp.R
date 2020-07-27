@@ -14,34 +14,44 @@ vs_decomp <- function(y,
                       moment = "skewness",
                       year = rep(1, length(y))){
   #input validation
+  p <- ncol(X)
+  year_val <- unique(year)
+  num_year <- length(year_val)
+  N <- rep(NA, num_year)
+  names(N) <- as.character(year_val)
   if(moment == "skewness"){
-    
-  } else {
-    if(ncol(X) > 1)
-      stop("currently, variance decomposition is only available for one variable")
-    year_val <- unique(year)
-    n <- length(year_val)
-    #initilize output
-    components <- matrix(NA, nrow = n, ncol = 2,
-                     dimnames = list(as.character(year_val), c("between", "within")))
-    components_sd <- matrix(NA, nrow = n, ncol = 2,
-                     dimnames = list(as.character(year_val), c("between_sd", "within_sd")))
-    N <- rep(NA, n)
-    names(N) <- as.character(year_val)
-    i <- 1
-    for(v in year_val){
-      ind <- year == v
-      tmp <- var_decomp(y[ind], X[ind, ], wgt[ind])
-      components[i,] <- tmp[1:2]
-      components_sd[i,] <- tmp[3:4]
-      N[i] <- sum(ind)
-      i <- i + 1
+    if(p == 1){
+      num_comp <- 3
+      comp_nms <- c("between", "within", "cov")
+      comp_se_nms <- c("between_sd", "within_sd", "cov_sd")
+      dec_func <- "skew_decomp"
     }
-    output <- list(moment = moment,
-                   components = components,
-                   components_sd = components_sd,
-                   N = N)
-    class(output) <- "var_decomp"
+  } else {
+    if(p > 1)
+      stop("currently, variance decomposition is only available for one variable")
+    num_comp <- 2
+    comp_nms <- c("between", "within")
+    comp_se_nms <- c("between_sd", "within_sd")
+    dec_func <- "var_decomp"
   }
+  #initilize output
+  components <- matrix(NA, nrow = num_year, ncol = num_comp,
+                       dimnames = list(as.character(year_val), comp_nms))
+  components_se <- matrix(NA, nrow = num_year, ncol = num_comp,
+                          dimnames = list(as.character(year_val), comp_sd_nms))
+  i <- 1
+  for(v in year_val){
+    ind <- year == v
+    tmp <- var_decomp(y[ind], X[ind, ], wgt[ind])
+    components[i,] <- tmp[1:num_comp]
+    components_se[i,] <- tmp[(num_comp + 1):(2*num_comp)]
+    N[i] <- sum(ind)
+    i <- i + 1
+  }
+  output <- list(moment = moment,
+                 components = components,
+                 components_se = components_se,
+                 N = N)
+  class(output) <- "var_decomp"
   return(output)
 }

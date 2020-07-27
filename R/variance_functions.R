@@ -10,8 +10,10 @@ suf_stat <- function(y, x, wgt = rep(1, length(y)), moment = "skewness"){
   ss <- data.frame(mu_g = rep(NA, n_groups),
                    mu2_g = rep(NA, n_groups),
                    mu3_g = rep(NA, n_groups),
-                   mu4_g = rep(NA, n_groups))
-  for(i in 1:4){
+                   mu4_g = rep(NA, n_groups),
+                   mu5_g = rep(NA, n_groups),
+                   mu6_g = rep(NA, n_groups))
+  for(i in 1:6){
     ss[,i] <- unlist(lapply(splitted_d, function(g){wtd.mean(g$y^i, g$wgt)}))
   }
   sum_w <- sum(wgt)
@@ -27,7 +29,10 @@ suf_stat <- function(y, x, wgt = rep(1, length(y)), moment = "skewness"){
   if(moment == "skewness"){
     ss$sigma2 <- wtd_var(y, wgt)
     ss$var_mu2_g <- with(ss, sum_p_i2_g * (mu4_g - mu2_g^2))
+    ss$var_mu3_g <- with(ss, sum_p_i2_g * (mu6_g - mu3_g^2))
     ss$cov_mu_g_mu2_g <- with(ss, (mu3_g - mu_g*mu2_g) * sum_p_i2_g)
+    ss$cov_mu_g_mu3_g <- with(ss, (mu4_g - mu_g*mu3_g) * sum_p_i2_g)
+    ss$cov_mu2_g_mu3_g <- with(ss, (mu5_g - mu2_g*mu3_g) * sum_p_i2_g)
   }
   return(ss)
 }
@@ -79,8 +84,8 @@ var_decomp <- function(y, x, wgt = rep(1, length(y))){
   S <- suf_stat(y, x, wgt)
   res <- c(between = between.var(S),
            within = within.var(S),
-           betweed_sd = sqrt(var_between.var(S)),
-           within_sd = sqrt(var_within.var(S)))
+           betweed_se = sqrt(var_between.var(S)),
+           within_se = sqrt(var_within.var(S)))
   return(res)
 }
 
