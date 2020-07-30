@@ -15,14 +15,15 @@ vs_decomp(
 \arguments{
 \item{y}{an outcome vector (must be numeric without NA's).}
 
-\item{X}{}
+\item{X}{matrix or data frame containing variables for the decomposition.}
 
 \item{wgt}{an optional vector of weights.}
 
 \item{moment}{the moment on which the decomposition method is applied.
 either "variance" (second moment) or "skewness" (third moment).}
 
-\item{year}{}
+\item{year}{an optional vector of years. if provided, the decomposition is calculated by year.
+otherwise, the decomposition is calculated for the whole sample.}
 }
 \description{
 Variance and Skewness Decomposition

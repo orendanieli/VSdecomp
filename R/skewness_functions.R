@@ -86,8 +86,8 @@ skew_decomp <- function(y, x, wgt = rep(1, length(y))){
   within_se <- sqrt(var_within.skew(S, within))
   within <- within * sigma2^-1.5
   cov <- cov.skew(S)
-  cov_se <- sqrt(var_cov.skew(S, cov))
-  cov <- cov * sigma2^-1.5
+  cov_se <- 3*sqrt(var_cov.skew(S, cov))
+  cov <- 3*cov * sigma2^-1.5
   res <- c(between = between,
            within = within,
            cov = cov,

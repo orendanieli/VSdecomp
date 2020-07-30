@@ -2,11 +2,12 @@
 #'
 #'
 #' @param y an outcome vector (must be numeric without NA's).
-#' @param X 
+#' @param X matrix or data frame containing variables for the decomposition.
 #' @param wgt an optional vector of weights.
 #' @param moment the moment on which the decomposition method is applied.
 #'               either "variance" (second moment) or "skewness" (third moment).
-#' @param year 
+#' @param year an optional vector of years. if provided, the decomposition is calculated by year.
+#'             otherwise, the decomposition is calculated for the whole sample.  
 
 vs_decomp <- function(y,
                       X,

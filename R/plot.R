@@ -15,7 +15,7 @@ plot.vs_decomp <- function(object, ylim = NULL){
   if(object$moment == "variance")
     colnames(diff) <- c("Between", "Within")
   else
-    colnames(diff) <- c("Between", "Within", "Cov")
+    colnames(diff) <- c("Between", "Within", "3Cov")
   diff <- as.data.frame(diff)
   years_vec <- as.integer(rownames(comp))
   diff$year <- years_vec
