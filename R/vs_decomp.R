@@ -18,7 +18,7 @@ vs_decomp <- function(y,
   year_val <- unique(year)
   num_year <- length(year_val)
   N <- rep(NA, num_year)
-  names(N) <- as.character(year_val)
+  names(N) <- ifelse(year_val == 1, " ", as.character(year_val))
   if(moment == "skewness"){
     if(p == 1){
       num_comp <- 3
@@ -38,11 +38,11 @@ vs_decomp <- function(y,
   components <- matrix(NA, nrow = num_year, ncol = num_comp,
                        dimnames = list(as.character(year_val), comp_nms))
   components_se <- matrix(NA, nrow = num_year, ncol = num_comp,
-                          dimnames = list(as.character(year_val), comp_sd_nms))
+                          dimnames = list(as.character(year_val), comp_se_nms))
   i <- 1
   for(v in year_val){
     ind <- year == v
-    tmp <- var_decomp(y[ind], X[ind, ], wgt[ind])
+    tmp <- do.call(dec_func, list(y = y[ind], x = X[ind, ], wgt = wgt[ind]))
     components[i,] <- tmp[1:num_comp]
     components_se[i,] <- tmp[(num_comp + 1):(2*num_comp)]
     N[i] <- sum(ind)
@@ -52,6 +52,6 @@ vs_decomp <- function(y,
                  components = components,
                  components_se = components_se,
                  N = N)
-  class(output) <- "var_decomp"
+  class(output) <- "vs_decomp"
   return(output)
 }

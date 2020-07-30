@@ -76,7 +76,6 @@ var_cov.skew <- function(ss, W){
   return(res)
 }
 
-#check that this function works and continue with summary and plot
 skew_decomp <- function(y, x, wgt = rep(1, length(y))){
   S <- suf_stat(y, x, wgt)
   sigma2 <- wtd_var(y, wgt)
@@ -92,7 +91,7 @@ skew_decomp <- function(y, x, wgt = rep(1, length(y))){
   res <- c(between = between,
            within = within,
            cov = cov,
-           betweed_se = betweed_se,
+           between_se = between_se,
            within_se = within_se,
            cov_se = cov_se)
   return(res)
