@@ -7,19 +7,27 @@
 linear_projection(y, X.list, data, wgt = rep(1, length(y)), comp.names = NULL)
 }
 \arguments{
-\item{y}{a character specifing the name of the outcome variable (e.g. "wage").}
+\item{y}{a character specifying the name of the outcome variable (e.g. "wage").
+Note that this variable is standardized before it's projected onto X.}
 
-\item{X.list}{a list containing the components}
+\item{X.list}{a list containing the names of all the variables needed for the linear projection, grouped
+according to the components will later be used in the skewness decomposition. For example:
+for X.list = list("x1", c("x2", "x3")) the following components are returned: \eqn{\beta1X1},
+(\eqn{\beta2X2+ \beta3X3}), \eqn{\epsilon}. interactions are defined as usual, e.g.:
+"x1:x2".}
 
 \item{data}{a data frame with all the variables specified in X.list and y.}
 
 \item{wgt}{an optional vector of weights.}
 
-\item{comp.names}{an optional vector specifing name for each component. should be the
+\item{comp.names}{an optional vector specifying name for each component. should be the
 same length as X.list.}
 }
+\value{
+a matrix with the components specified by X.list + residuals. Note that each row is summed to
+the standardized version of y.
+}
 \description{
-this function projects the standardized version of y onto all the variables in X.list
-(so that \eqn{Y = \beta*X + \epsilon})
-and returns
+estimates the linear model \eqn{y = \beta*X + \epsilon} and returns the linear projection
+of it, according to the components of X.list.
 }

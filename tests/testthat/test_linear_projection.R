@@ -11,7 +11,7 @@ colnames(dat)[1] <- "wage"
 wgt <- rexp(n, 0.5)
 
 test_that("linear_projection returns valid output", {
-  res <- linear_projection(wage, X.list = list("x1", c("x2", "x3")),
+  res <- linear_projection(wage, X.list = list("x1", c("x2", "x3"), "x2:x3"),
                            data = dat, wgt= wgt)
   y <- apply(res, 1, sum)
   wage <- standardize(dat$wage, wgt)
