@@ -85,7 +85,7 @@ test_that("SE of the within component is correct", {
   expect_true(abs(app_se - emp_se) / app_se < 0.05)
 })
 
-skip = F
+
 test_that("SE of the cov component is correct", {
   if(skip){
     return(TRUE)
