@@ -1,6 +1,8 @@
 #make this function comfortable with interactions (use model.matrix after line 32)
 #add an example and continue with the output of this function to vs_decomp
 
+#this is just a test
+
 #' Linear Projection
 #'
 #' estimates the linear model \eqn{y = \beta*X + \epsilon} and returns the linear projection
