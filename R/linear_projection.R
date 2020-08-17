@@ -1,7 +1,5 @@
-#make this function comfortable with interactions (use model.matrix after line 32)
 #add an example and continue with the output of this function to vs_decomp
 
-#this is just a test
 
 #' Linear Projection
 #'
@@ -14,13 +12,15 @@
 #'               according to the components will later be used in the skewness decomposition. For example:
 #'               for X.list = list("x1", c("x2", "x3")) the following components are returned: \eqn{\beta1X1},
 #'               (\eqn{\beta2X2+ \beta3X3}), \eqn{\epsilon}. Interactions are defined as usual, e.g.:
-#'               "x1:x2".
+#'               "x1:x2" (cuurently only second-order interactions are allowed).
 #' @param data a data frame with all the variables specified in X.list and y.
 #' @param wgt an optional vector of weights.
 #' @param comp.names an optional vector specifying name for each component. should be the
 #'                   same length as X.list. 
 #' @return a matrix with the components specified by X.list + residuals. Note that each row is summed to
 #'         the standardized version of y.
+#' @examples
+#' 
 
 linear_projection <- function(y, X.list, data, 
                               wgt = rep(1, length(y)),
@@ -29,24 +29,24 @@ linear_projection <- function(y, X.list, data,
   #standradize y 
   data[,dep_var] <- standardize(data[,dep_var], wgt)
   all_x = unlist(X.list)
+  #we want to estimate a model with intercept, so that predict(type="term") will give us
+  #what we want - indepedent terms that are summed up to the dependent variable
+  all_x <- c("-1", all_x) 
   #create formula
   indep_vars <- paste(all_x, collapse='+')
   form <- as.formula(paste(dep_var, '~', indep_vars))
   lin_model <- lm(formula = form, data = data, weights = wgt)
   #aggregate components (according to X.list)
+  all_comp <- predict(lin_model, type = "term")
   n_obs <- nrow(data)
   n_comp <- length(X.list)
   res <- matrix(nrow = n_obs, ncol = n_comp + 1)
   for(i in 1:n_comp){
-    #gen data with constants except for a specific component
-    #specifically, take the first row as a constant
-    tmp <- data[rep(1, n_obs), all_x, drop = F]
     comp <- X.list[[i]]
-    tmp[,comp] <- data[,comp]
-    res[,i] <- predict(lin_model, newdata = tmp)
+    res[,i] <- apply(all_comp[,comp, drop = F], 1, sum)
   }
   #normalize (we do this because we want to eliminate the constants)
-  res[,1:n_comp] <- apply(res[,1:n_comp, drop = F], 2, function(x){x - wtd.mean(x, wgt)})
+  #res[,1:n_comp] <- apply(res[,1:n_comp, drop = F], 2, function(x){x - wtd.mean(x, wgt)})
   #add epsilon (=residual)
   res[,n_comp + 1] <- lin_model$residuals
   #add names
@@ -76,3 +76,4 @@ create_names <- function(X.list){
 standardize <- function(y, wgt){
    (y - wtd.mean(y, wgt)) / sqrt(wtd.mean(y^2, wgt) - wtd.mean(y, wgt)^2)
 }
+
