@@ -97,5 +97,7 @@ skew_decomp <- function(y, x, wgt = rep(1, length(y))){
   return(res)
 }
 
-
-
+#fill this function (see expand function from oren's code)
+linear_skew_decomp <- function(X, wgt = rep(1, nrow(X))){
+  
+}

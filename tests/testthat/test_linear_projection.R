@@ -17,5 +17,7 @@ test_that("linear_projection returns valid output", {
                            data = dat, wgt= wgt)
   y <- apply(res, 1, sum)
   wage <- standardize(dat$wage , wgt)
-  expect_true(sum((y - wage)^2) < 0.0001)
+  diff <- y - wage
+  #y should be equal to wage up to a constant
+  expect_true(wtd_var(diff, wgt) < 10^-10)
 })

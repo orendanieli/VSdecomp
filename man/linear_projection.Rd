@@ -4,7 +4,7 @@
 \alias{linear_projection}
 \title{Linear Projection}
 \usage{
-linear_projection(y, X.list, data, wgt = rep(1, length(y)), comp.names = NULL)
+linear_projection(y, X.list, data, wgt = rep(1, nrow(data)), comp.names = NULL)
 }
 \arguments{
 \item{y}{a character specifying the name of the outcome variable (e.g. "wage").
@@ -13,8 +13,8 @@ Note that this variable is standardized before it's projected onto X.}
 \item{X.list}{a list containing the names of all the variables needed for the linear projection, grouped
 according to the components will later be used in the skewness decomposition. For example:
 for X.list = list("x1", c("x2", "x3")) the following components are returned: \eqn{\beta1X1},
-(\eqn{\beta2X2+ \beta3X3}), \eqn{\epsilon}. interactions are defined as usual, e.g.:
-"x1:x2".}
+(\eqn{\beta2X2+ \beta3X3}), \eqn{\epsilon}. Interactions are defined as usual, e.g.:
+"x1:x2" (cuurently only second-order interactions are allowed).}
 
 \item{data}{a data frame with all the variables specified in X.list and y.}
 
@@ -24,10 +24,24 @@ for X.list = list("x1", c("x2", "x3")) the following components are returned: \e
 same length as X.list.}
 }
 \value{
-a matrix with the components specified by X.list + residuals. Note that each row is summed to
+a matrix with the components specified by X.list + residuals. Note that each row is summed up to
 the standardized version of y.
 }
 \description{
-estimates the linear model \eqn{y = \beta*X + \epsilon} and returns the linear projection
-of it, according to the components of X.list.
+estimates the linear model \eqn{y = \beta*X + \epsilon} and returns its linear
+components, grouped according to X.list.
+}
+\examples{
+#gen data
+n <- 1000
+X <- matrix(rnorm(n*3), ncol = 3)
+colnames(X) <- c("x1", "x2", "x3")
+beta <- c(1,2,3)
+wage <- X \%*\% beta + rnorm(n)
+dat <- as.data.frame(cbind(wage, X))
+colnames(dat)[1] <- "wage"
+res <- linear_projection("wage", X.list = list("x1", c("x2", "x3"), "x2:x3"), data = dat)
+#each row is summed up to the standardized wage:
+stand_wage <- (wage - mean(wage)) / sd(wage)
+sum((apply(res, 1, sum) - stand_wage)^2)
 }

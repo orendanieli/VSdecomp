@@ -1,10 +1,8 @@
-#add an example and continue with the output of this function to vs_decomp
-
 
 #' Linear Projection
 #'
-#' estimates the linear model \eqn{y = \beta*X + \epsilon} and returns the linear projection
-#' of it, according to the components of X.list.
+#' estimates the linear model \eqn{y = \beta*X + \epsilon} and returns its linear
+#' components, grouped according to X.list.
 #' 
 #' @param y a character specifying the name of the outcome variable (e.g. "wage"). 
 #'           Note that this variable is standardized before it's projected onto X.
@@ -17,26 +15,39 @@
 #' @param wgt an optional vector of weights.
 #' @param comp.names an optional vector specifying name for each component. should be the
 #'                   same length as X.list. 
-#' @return a matrix with the components specified by X.list + residuals. Note that each row is summed to
-#'         the standardized version of y.
+#' @return a matrix with the (centered) components specified by X.list + residuals. Note that each row is summed (up to 
+#'         a constant) to the standardized version of y, and each column to 0.
 #' @examples
-#' 
+#' #gen data
+#' n <- 1000
+#' X <- matrix(rnorm(n*3), ncol = 3)
+#' colnames(X) <- c("x1", "x2", "x3")
+#' beta <- c(1,2,3)
+#' wage <- X %*% beta + rnorm(n)
+#' dat <- as.data.frame(cbind(wage, X))
+#' colnames(dat)[1] <- "wage"
+#' res <- linear_projection("wage", X.list = list("x1", c("x2", "x3"), "x2:x3"), data = dat)
+#' #each row is summed (up to a constant) to the standardized wage:
+#' stand_wage <- (wage - mean(wage)) / sd(wage)
+#' diff <- apply(res, 1, sum) - stand_wage
+#' summary(diff)
+
+#' @export
 
 linear_projection <- function(y, X.list, data, 
-                              wgt = rep(1, length(y)),
+                              wgt = rep(1, nrow(data)),
                               comp.names = NULL){
   dep_var <- ifelse(is.character(y), y, as.character(deparse(substitute(y))))
   #standradize y 
   data[,dep_var] <- standardize(data[,dep_var], wgt)
   all_x = unlist(X.list)
-  #we want to estimate a model with intercept, so that predict(type="term") will give us
-  #what we want - indepedent terms that are summed up to the dependent variable
-  all_x <- c("-1", all_x) 
   #create formula
   indep_vars <- paste(all_x, collapse='+')
   form <- as.formula(paste(dep_var, '~', indep_vars))
   lin_model <- lm(formula = form, data = data, weights = wgt)
   #aggregate components (according to X.list)
+  #note that here we already get centerd terms, so no normalization is needed. 
+  #(this is important cause later we calculate cov and its convenient that all variables are zero mean)
   all_comp <- predict(lin_model, type = "term")
   n_obs <- nrow(data)
   n_comp <- length(X.list)
@@ -45,8 +56,6 @@ linear_projection <- function(y, X.list, data,
     comp <- X.list[[i]]
     res[,i] <- apply(all_comp[,comp, drop = F], 1, sum)
   }
-  #normalize (we do this because we want to eliminate the constants)
-  #res[,1:n_comp] <- apply(res[,1:n_comp, drop = F], 2, function(x){x - wtd.mean(x, wgt)})
   #add epsilon (=residual)
   res[,n_comp + 1] <- lin_model$residuals
   #add names
