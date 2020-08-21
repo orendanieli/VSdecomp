@@ -15,7 +15,8 @@ vs_decomp(
 \arguments{
 \item{y}{an outcome vector (must be numeric without NA's).}
 
-\item{X}{matrix or data frame containing variables for the decomposition.}
+\item{X}{matrix or data frame containing variables for the decomposition. Usually, if decomposition by
+more than one variable is desired, X should be the output of \code{\link{linear_projection}}.}
 
 \item{wgt}{an optional vector of weights.}
 

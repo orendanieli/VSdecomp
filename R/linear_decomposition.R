@@ -1,4 +1,3 @@
-
 #' Linear Projection
 #'
 #' estimates the linear model \eqn{y = \beta*X + \epsilon} and returns its linear
@@ -60,9 +59,9 @@ linear_projection <- function(y, X.list, data,
   res[,n_comp + 1] <- lin_model$residuals
   #add names
   if(!is.null(comp.names) & length(comp.names) == n_comp){
-    colnames(res) <- c(comp.names, "residual")
+    colnames(res) <- c(comp.names, "epsilon")
   } else {
-    colnames(res) <- c(create_names(X.list), "residual")
+    colnames(res) <- c(create_names(X.list), "epsilon")
   }
   return(res)
 }
@@ -83,6 +82,43 @@ create_names <- function(X.list){
 }
 
 standardize <- function(y, wgt){
-   (y - wtd.mean(y, wgt)) / sqrt(wtd.mean(y^2, wgt) - wtd.mean(y, wgt)^2)
+  (y - wtd.mean(y, wgt)) / sqrt(wtd.mean(y^2, wgt) - wtd.mean(y, wgt)^2)
 }
 
+#this function calculates the components of the linear skewness decomposition
+#(typically this is done on the output of linear_projection())
+#note: all X columns should be zero mean
+linear_skew_decomp <- function(X, wgt = rep(1, nrow(X))){
+  X_names <- colnames(X)
+  p <- ncol(X)
+  mu3 <- X^3
+  mu3_names <- paste0("mu3(", X_names, ")")
+  X_squared <- X^2
+  #cov of second with first moment
+  pair_comb <- cbind(combn(1:p, 2), combn(p:1, 2))
+  cov21 <- apply(pair_comb, 2, 
+                 function(pair){3 * X_squared[,pair[1]] * X[,pair[2]]})
+  cov21 <- as.data.frame(cov21)
+  #set names
+  cov21_names <- apply(pair_comb, 2,
+                       function(pair){paste0("cov(", X_names[pair[1]], 
+                                             "^2,", X_names[pair[2]], ")")})
+  #3 first moments multiplication
+  if (p > 2){
+    triple_comb <- combn(1:p, 3)
+    triple <- apply(triple_comb, 2,
+                    function(tr){6 * apply(X[,tr], 1, prod)})
+    #set names
+    triple_names <- apply(triple_comb, 2,
+                          function(tr){paste0(X_names[tr], collapse = ",")})
+    triple_names <- paste0("E(", triple_names, ")")
+    res <- cbind(mu3, cov21, triple)
+    res_names <- c(mu3_names, cov21_names, triple_names)
+  } else {
+    res <-  cbind(mu3, cov21)
+    res_names <- c(mu3_names, cov21_names)
+  }
+  res <- apply(res, 2, wtd.mean, weights = wgt)
+  names(res) <- res_names
+  return(res)
+}

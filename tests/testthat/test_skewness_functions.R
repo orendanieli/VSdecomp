@@ -112,3 +112,36 @@ test_that("SE of the cov component is correct", {
   print(emp_se)
   expect_true(abs(app_se - emp_se) / app_se < 0.05)
 })
+
+test_that("linear_skew_decomp returns output that sums to the skewness of y", {
+  n <- 1000
+  w <- rexp(n, 0.5)
+  #all variables are zero mean
+  x1 <- rnorm(n, mean = 0, sd = 0.5)
+  x2 <- rnorm(n, mean = 0, sd = 0.5)
+  epsilon <- rnorm(n, mean = 0, sd = sqrt(0.5))
+  #X includes epsilon
+  X <- cbind(x1, x2, epsilon)
+  #note that y is standardized
+  y <- apply(X, 1, sum)
+  dec <- linear_skew_decomp(X, wgt = w)
+  skew_y <- wtd.mean(y^3, weights = w)
+  expect_true(abs(skew_y - sum(dec)) < 0.001)
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

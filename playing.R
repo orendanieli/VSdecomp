@@ -18,3 +18,7 @@ tmp <- vs_decomp(y = y,
                  year = year)
 plot(tmp)
 summary(tmp)
+
+X = matrix(rnorm(3*n), ncol = 3)
+colnames(X) = c("ind", "occ", "eps")
+bla = linear_skew_decomp(X)
