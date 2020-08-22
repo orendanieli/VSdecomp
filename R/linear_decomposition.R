@@ -12,8 +12,7 @@
 #'               "x1:x2" (cuurently only second-order interactions are allowed).
 #' @param data a data frame with all the variables specified in X.list and y.
 #' @param wgt an optional vector of weights.
-#' @param comp.names an optional vector specifying name for each component. should be the
-#'                   same length as X.list. 
+#' @param comp.names an optional vector specifying name for each component.
 #' @return a matrix with the (centered) components specified by X.list + residuals. Note that each row is summed (up to 
 #'         a constant) to the standardized version of y, and each column to 0.
 #' @examples

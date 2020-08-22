@@ -1,3 +1,5 @@
+library(MASS)
+#playing for p == 1
 n <- 5000
 year = c()
 y <- c()
@@ -14,11 +16,24 @@ X = matrix(x, ncol = 1)
 
 tmp <- vs_decomp(y = y,
                  X = X,
-                 moment = "variance",
+                 moment = "skew",
                  year = year)
 plot(tmp)
 summary(tmp)
 
-X = matrix(rnorm(3*n), ncol = 3)
-colnames(X) = c("ind", "occ", "eps")
-bla = linear_skew_decomp(X)
+#playing for p > 1
+n = 10000
+X = mvrnorm(n, mu = c(2, 1), Sigma = matrix(c(1, 0.1, 0.1, 1), ncol = 2))
+colnames(X) = c("ind", "occ")
+wage = X %*% c(3,1) + rnorm(n)
+dat = cbind.data.frame(wage, X)
+X = linear_projection(y = "wage", X.list = list("ind", "occ"), data = dat)
+year = sample(c(1996, 1997), size = n, replace = T)
+bla = vs_decomp(X = X, year = year)
+
+
+bla2 = linear_skew_decomp(X = X)
+
+
+
+

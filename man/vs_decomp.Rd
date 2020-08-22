@@ -2,21 +2,23 @@
 % Please edit documentation in R/vs_decomp.R
 \name{vs_decomp}
 \alias{vs_decomp}
-\title{Variance and Skewness Decomposition}
+\title{Skewness and Variance Decomposition}
 \usage{
 vs_decomp(
-  y,
+  y = NULL,
   X,
-  wgt = rep(1, length(y)),
+  wgt = rep(1, nrow(X)),
   moment = "skewness",
-  year = rep(1, length(y))
+  year = rep(1, nrow(X))
 )
 }
 \arguments{
-\item{y}{an outcome vector (must be numeric without NA's).}
+\item{y}{an outcome vector (necessary only when decomposing by one variable).}
 
-\item{X}{matrix or data frame containing variables for the decomposition. Usually, if decomposition by
-more than one variable is desired, X should be the output of \code{\link{linear_projection}}.}
+\item{X}{when decomposing by one variable, a matrix or data frame containing the variable
+for the decomposition. when decomposing by more than one variable, a matrix or
+data frame containing the linear components of y, calculated by
+\code{\link{linear_projection}}.}
 
 \item{wgt}{an optional vector of weights.}
 
@@ -26,6 +28,10 @@ either "variance" (second moment) or "skewness" (third moment).}
 \item{year}{an optional vector of years. if provided, the decomposition is calculated by year.
 otherwise, the decomposition is calculated for the whole sample.}
 }
+\value{
+
+}
 \description{
-Variance and Skewness Decomposition
+decompose the skewness or the variance of an outcome vector into independent components,
+either using one or many variables.
 }

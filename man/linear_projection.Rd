@@ -20,8 +20,7 @@ for X.list = list("x1", c("x2", "x3")) the following components are returned: \e
 
 \item{wgt}{an optional vector of weights.}
 
-\item{comp.names}{an optional vector specifying name for each component. should be the
-same length as X.list.}
+\item{comp.names}{an optional vector specifying name for each component.}
 }
 \value{
 a matrix with the (centered) components specified by X.list + residuals. Note that each row is summed (up to
