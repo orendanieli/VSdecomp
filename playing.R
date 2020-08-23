@@ -16,7 +16,7 @@ X = matrix(x, ncol = 1)
 
 tmp <- vs_decomp(y = y,
                  X = X,
-                 moment = "skew",
+                 moment = "var",
                  year = year)
 plot(tmp)
 summary(tmp)

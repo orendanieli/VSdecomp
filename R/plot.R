@@ -1,27 +1,47 @@
-#' Calculates sufficient statistics for the variance decomposition
+#' Plot Method for 'vs_decomp' objects 
 #'
+#' @param object a 'vs_decomp' object
+#' @param plot.comp which components to plot? either character vector specifing components names
+#'                  or numeric vector specifing components indices. the user can choose up to 3
+#'                  components to be displayed on the graph, while all other components are
+#'                  summed and displayed as "all other terms"
 #' @importFrom ggplot2 ggplot aes geom_area theme scale_x_continuous
 #' theme_bw ylab xlab labs geom_line geom_point
-plot.vs_decomp <- function(object, ylim = NULL){
+plot.vs_decomp <- function(object, 
+                           plot.comp = NULL,
+                           comp.names = NULL,
+                           ylim = NULL){
   comp <- object$components
+  type <- object$type
+  moment <- object$moment
   n <- nrow(comp)
   if(n <= 1){
     stop("plot.vs_decomp isn't available for only one year")
   } 
-  
+  if(type == "linear"){
+    comp <- pick_comp(comp, plot.comp)
+    if(is.null(comp.names)){
+      comp_names <- colnames(comp)
+    } else {
+      comp_names <- c(comp.names, "all other terms")
+    }
+  } else {
+    if(moment == "variance"){
+      comp_names <- c("Between", "Within")
+    } else {
+      comp_names <- c("Between", "Within", "3Cov")
+    }
+  }
   base_comp <- comp[1, ,drop = F]
   diff <- t(apply(comp, 1, function(x){x - base_comp}))
   total <- apply(diff, 1, sum)
-  if(object$moment == "variance")
-    colnames(diff) <- c("Between", "Within")
-  else
-    colnames(diff) <- c("Between", "Within", "3Cov")
+  colnames(diff) <- comp_names
   diff <- as.data.frame(diff)
   years_vec <- as.integer(rownames(comp))
   diff$year <- years_vec
   melted_diff <- reshape::melt(diff, id = "year")
   diff$total <- total
-  diff$leg_label = ifelse(object$moment == "variance", "Total Variance", "Total Skewness")
+  diff$leg_label = ifelse(moment == "variance", "Total Variance", "Total Skewness")
   colnames(melted_diff)[2] <- "Component"
   graph <- ggplot(melted_diff, aes(x=year, y=value)) +
     geom_area(aes(fill = Component), col='black') + 
@@ -35,3 +55,33 @@ plot.vs_decomp <- function(object, ylim = NULL){
     labs(linetype="", shape="")
   graph
 }
+
+
+#this function picks up to 3 components and sums all other to one component called
+#"all other terms"
+pick_comp <- function(comp.table, comp.list = NULL){
+  if(is.null(comp.list)){
+    comp_ind <- 1:3
+    n <- 3
+  } else {
+    n <- length(comp.list)
+    if(n > 3){
+      stop("no more than 3 components are allowed")
+    }
+    if(is.numeric(comp.list)){
+      comp_ind <- comp.list
+    } else {
+      comp_ind <- which(colnames(comp.table) == comp.list)
+    }
+  }
+  res <- comp.table[,comp_ind]
+  all_other <- apply(comp.table[,-comp_ind], 1, sum)
+  res <- cbind(res, all_other)
+  colnames(res)[n + 1] <- "all other terms"
+  return(res)
+}
+
+
+
+
+

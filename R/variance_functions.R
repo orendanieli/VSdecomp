@@ -84,7 +84,7 @@ var_decomp <- function(y, x, wgt = rep(1, length(y))){
   S <- suf_stat(y, x, wgt)
   res <- c(between = between.var(S),
            within = within.var(S),
-           betweed_se = sqrt(var_between.var(S)),
+           between_se = sqrt(var_between.var(S)),
            within_se = sqrt(var_within.var(S)))
   return(res)
 }

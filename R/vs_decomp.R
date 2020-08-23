@@ -1,6 +1,5 @@
-#check whether the code could be more efficient for p = 1.
-#write some validation functions for the input.
-#plot and summary for p > 1
+#document plot
+#summary for p > 1
 #play and test p > 1 to see that it actually works (maybe just by replicating oren's results)
 
 #' Skewness and Variance Decomposition
@@ -25,7 +24,7 @@ vs_decomp <- function(y = NULL,
                       wgt = rep(1, nrow(X)),
                       moment = "skewness",
                       year = rep(1, nrow(X))){
-  #input validation
+  validate_input(y, X, wgt, year)
   #replace "moment" with its abbreviation (var / ske)
   moment <- substr(moment, 1 ,3)
   p <- ncol(X)
@@ -33,32 +32,23 @@ vs_decomp <- function(y = NULL,
   num_year <- length(year_val)
   N <- rep(NA, num_year) #num. of observations in each year
   names(N) <- ifelse(year_val == 1, " ", as.character(year_val))
+  #initialize output
+  components <- NULL
+  components_se <- NULL
   if (p <= 1){
-    if(moment == "ske"){
-      num_comp <- 3
-      comp_nms <- c("between", "within", "cov")
-      comp_se_nms <- c("between_sd", "within_sd", "cov_sd")
-      dec_func <- "skew_decomp"
-    } else {
-      num_comp <- 2
-      comp_nms <- c("between", "within")
-      comp_se_nms <- c("between_sd", "within_sd")
-      dec_func <- "var_decomp"
-    }
-    #initilize output
-    components <- matrix(NA, nrow = num_year, ncol = num_comp,
-                         dimnames = list(names(N), comp_nms))
-    components_se <- matrix(NA, nrow = num_year, ncol = num_comp,
-                            dimnames = list(names(N), comp_se_nms))
+    dec_func <- ifelse(moment == "var", "var_decomp", "skew_decomp")
+    num_comp <- ifelse(moment == "var", 2, 3)
     i <- 1
     for(v in year_val){
       ind <- year == v
       tmp <- do.call(dec_func, list(y = y[ind], x = X[ind, ], wgt = wgt[ind]))
-      components[i,] <- tmp[1:num_comp]
-      components_se[i,] <- tmp[(num_comp + 1):(2*num_comp)]
+      components <- rbind(components, tmp[1:num_comp])
+      components_se <- rbind(components_se, tmp[(num_comp + 1):(2*num_comp)])
       N[i] <- sum(ind)
       i <- i + 1
     }
+    row.names(components_se) <- names(N)
+    type <- "one variable"
   } else {
     if(moment == "var")
       stop("currently, variance decomposition is only available for one variable")
@@ -70,13 +60,39 @@ vs_decomp <- function(y = NULL,
       N[i] <- sum(ind)
       i <- i + 1
     }
-    row.names(components) <- names(N)
-    components_se <- NULL
+    type <- "linear"
   }
+  row.names(components) <- names(N)
   output <- list(moment = ifelse(moment == "var", "variance", "skewness"),
                  components = components,
                  components_se = components_se,
-                 N = N)
+                 N = N,
+                 type = type)
   class(output) <- "vs_decomp"
   return(output)
+}
+
+validate_input <- function(y, X, wgt, year){
+  n <- nrow(X)
+  p <- ncol(X)
+  if(is.null(p)){
+    stop("X should be a matrix or data frame")
+  }
+  if(!inherits(wgt, "numeric") | n != length(wgt) | any(is.na(wgt))){
+    stop(paste("wgt must be numeric,",
+               "with the same number of examples as X.",
+               "missing values aren't allowed"))
+  }
+  if(n != length(year) | any(is.na(year))){
+    stop(paste("year must contain",
+               "the same number of examples as X.",
+               "missing values aren't allowed"))
+  }
+  if(p > 1){
+    colmeans <- apply(X, 2, wtd.mean, weights = wgt)
+    if(!all(colmeans^2 < 0.01)){
+      stop(paste("not all columns of X are zero mean.",
+                 "please use linear_projection()"))
+    }
+  }
 }
