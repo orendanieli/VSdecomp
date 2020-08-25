@@ -1,6 +1,4 @@
-#document plot
-#summary for p > 1
-#play and test p > 1 to see that it actually works (maybe just by replicating oren's results)
+#replicate oren's results
 
 #' Skewness and Variance Decomposition
 #'
@@ -18,6 +16,8 @@
 #' @param year an optional vector of years. if provided, the decomposition is calculated by year.
 #'             otherwise, the decomposition is calculated for the whole sample.  
 #' @return 
+#' 
+#' @export
 
 vs_decomp <- function(y = NULL,
                       X,
@@ -29,6 +29,9 @@ vs_decomp <- function(y = NULL,
   moment <- substr(moment, 1 ,3)
   p <- ncol(X)
   year_val <- unique(year)
+  if(is.numeric(year_val)){
+    year_val <- year_val[order(year_val)]
+  }
   num_year <- length(year_val)
   N <- rep(NA, num_year) #num. of observations in each year
   names(N) <- ifelse(year_val == 1, " ", as.character(year_val))

@@ -2,10 +2,18 @@
 % Please edit documentation in R/plot.R
 \name{plot.vs_decomp}
 \alias{plot.vs_decomp}
-\title{Calculates sufficient statistics for the variance decomposition}
+\title{Plot Method for 'vs_decomp' objects}
 \usage{
-\method{plot}{vs_decomp}(object, ylim = NULL)
+\method{plot}{vs_decomp}(object, plot.comp = NULL, ylim = NULL)
+}
+\arguments{
+\item{object}{a 'vs_decomp' object.}
+
+\item{plot.comp}{a vector of up to 3 components to plot. can be either character
+with component names or numeric with component indices. other
+components not specified by plot.comp are summed to one additional
+component. default is to plot the first 3 components.}
 }
 \description{
-Calculates sufficient statistics for the variance decomposition
+Plot Method for 'vs_decomp' objects
 }

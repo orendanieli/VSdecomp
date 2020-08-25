@@ -1,15 +1,14 @@
-#' Plot Method for 'vs_decomp' objects 
+#' Plot Method for 'vs_decomp' Objects 
 #'
-#' @param object a 'vs_decomp' object
-#' @param plot.comp which components to plot? either character vector specifing components names
-#'                  or numeric vector specifing components indices. the user can choose up to 3
-#'                  components to be displayed on the graph, while all other components are
-#'                  summed and displayed as "all other terms"
+#' @param object a 'vs_decomp' object.
+#' @param plot.comp a vector of up to 3 components to plot. can be either character 
+#'                  with component names or numeric with component indices. other
+#'                  components not specified by plot.comp are summed to one additional
+#'                  component. default is to plot the first 3 components.
 #' @importFrom ggplot2 ggplot aes geom_area theme scale_x_continuous
 #' theme_bw ylab xlab labs geom_line geom_point
 plot.vs_decomp <- function(object, 
                            plot.comp = NULL,
-                           comp.names = NULL,
                            ylim = NULL){
   comp <- object$components
   type <- object$type
@@ -20,11 +19,7 @@ plot.vs_decomp <- function(object,
   } 
   if(type == "linear"){
     comp <- pick_comp(comp, plot.comp)
-    if(is.null(comp.names)){
-      comp_names <- colnames(comp)
-    } else {
-      comp_names <- c(comp.names, "all other terms")
-    }
+    comp_names <- colnames(comp)
   } else {
     if(moment == "variance"){
       comp_names <- c("Between", "Within")

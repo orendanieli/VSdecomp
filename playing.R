@@ -16,7 +16,7 @@ X = matrix(x, ncol = 1)
 
 tmp <- vs_decomp(y = y,
                  X = X,
-                 moment = "var",
+                 moment = "skew",
                  year = year)
 plot(tmp)
 summary(tmp)
@@ -31,6 +31,7 @@ X = linear_projection(y = "wage", X.list = list("ind", "occ"), data = dat)
 year = sample(c(1996, 1997), size = n, replace = T)
 bla = vs_decomp(X = X, year = year)
 
+summary(bla, sum.comp = 4:6)
 
 bla2 = linear_skew_decomp(X = X)
 
