@@ -4,7 +4,8 @@ Version: 0.0.0.9000
 Authors@R: c(
   person("Elad", "Guttman", role = c("aut", "cre"), email = "eladguttman@mail.tau.ac.il"),
   person("Oren", "Danieli", role = "aut"))
-Description: What the package does (one paragraph).
+Description: decompose the skewness or the variance of a variable (e.g., wage) into 
+             independent components, either using one or many variables. 
 License: GPL-3
 Encoding: UTF-8
 LazyData: true

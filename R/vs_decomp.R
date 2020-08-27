@@ -86,6 +86,10 @@ validate_input <- function(y, X, wgt, year){
                "with the same number of examples as X.",
                "missing values aren't allowed"))
   }
+  #we dont allow for weight = 0 since wtd.mean(1, 0) = NaN
+  if(any(wgt <= 0)){
+    stop("wgt must be positive.")
+  }
   if(n != length(year) | any(is.na(year))){
     stop(paste("year must contain",
                "the same number of examples as X.",

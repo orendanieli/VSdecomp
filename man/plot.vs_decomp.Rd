@@ -2,9 +2,9 @@
 % Please edit documentation in R/plot.R
 \name{plot.vs_decomp}
 \alias{plot.vs_decomp}
-\title{Plot Method for 'vs_decomp' objects}
+\title{Plot Method for 'vs_decomp' Objects}
 \usage{
-\method{plot}{vs_decomp}(object, plot.comp = NULL, ylim = NULL)
+\method{plot}{vs_decomp}(object, plot.comp = NULL, fill.colors = NULL, abs.terms = T, ylim = NULL)
 }
 \arguments{
 \item{object}{a 'vs_decomp' object.}
@@ -13,7 +13,12 @@
 with component names or numeric with component indices. other
 components not specified by plot.comp are summed to one additional
 component. default is to plot the first 3 components.}
+
+\item{fill.colors}{colors to fill the areas. see \code{\link[ggplot2]{scale_fill_manual}}
+for more details.}
+
+\item{abs.terms}{whether to plot absolute terms. default is TRUE.}
 }
 \description{
-Plot Method for 'vs_decomp' objects
+Plot Method for 'vs_decomp' Objects
 }

@@ -5,10 +5,16 @@
 #'                  with component names or numeric with component indices. other
 #'                  components not specified by plot.comp are summed to one additional
 #'                  component. default is to plot the first 3 components.
+#' @param fill.colors colors to fill the areas. see \code{\link[ggplot2]{scale_fill_manual}}
+#'                    for more details.
+#' @param abs.terms whether to plot absolute terms. default is TRUE.
 #' @importFrom ggplot2 ggplot aes geom_area theme scale_x_continuous
 #' theme_bw ylab xlab labs geom_line geom_point
+#' @export
 plot.vs_decomp <- function(object, 
                            plot.comp = NULL,
+                           fill.colors = NULL,
+                           abs.terms = T,
                            ylim = NULL){
   comp <- object$components
   type <- object$type
@@ -36,8 +42,13 @@ plot.vs_decomp <- function(object,
   diff$year <- years_vec
   melted_diff <- reshape::melt(diff, id = "year")
   diff$total <- total
-  diff$leg_label = ifelse(moment == "variance", "Total Variance", "Total Skewness")
+  diff$leg_label <- ifelse(moment == "variance", "Total Variance", "Total Skewness")
   colnames(melted_diff)[2] <- "Component"
+  melted_diff$Component <- factor(melted_diff$Component, c("3Cov", "Within", "Between"))
+  if(abs.terms){
+    melted_diff$value <- abs(melted_diff$value)
+    diff$total <- abs(diff$total)
+  }
   graph <- ggplot(melted_diff, aes(x=year, y=value)) +
     geom_area(aes(fill = Component), col='black') + 
     theme(legend.position="right") +
@@ -48,6 +59,9 @@ plot.vs_decomp <- function(object,
     geom_line(data = diff, aes(year, total, linetype = leg_label), size = 1) +
     geom_point(data = diff, aes(year, total, shape = leg_label), size = 2) +
     labs(linetype="", shape="")
+  if(!is.null(fill.colors)){
+    graph <- graph + scale_fill_manual(values = fill.colors)
+  }
   graph
 }
 
