@@ -45,12 +45,17 @@ year <- dat %>% pull(year)
 w <- dat %>% pull(wgt_hrs)
 X <- dat %>% select(occ) %>% as.data.frame()
 decomp_object <- vs_decomp(y = y, X = X, year = year, wgt = w)  
-plot(decomp_object)  
+plot(decomp_object, abs.terms = F)  
   
+#Figure 25: Skewness Decomposition by Occupation and Industry 
+dat <- dat %>% mutate(ind = as.factor(ind),
+                      occ = as.factor(occ))
+
+y_comp <- linear_projection(y = "log_hr_wage", X.list = list("occ", "ind"), 
+                            data = dat, wgt = w) 
   
-  
-  
-  
+reg1 = lm(log_hr_wage ~ occ + ind, data = dat[1:100000,])
+reg2 = felm(log_hr_wage ~ occ + ind, data = dat[1:100000,])
   
   
   

@@ -14,6 +14,7 @@ RoxygenNote: 7.1.1
 Imports: 
     Hmisc,
     ggplot2,
-    reshape
+    reshape,
+    lfe
 Suggests: 
     testthat
