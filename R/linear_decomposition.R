@@ -8,8 +8,8 @@
 #' @param X.list a list containing the names of all the variables needed for the linear projection, grouped
 #'               according to the components will later be used in the skewness decomposition. For example:
 #'               for X.list = list("x1", c("x2", "x3")) the following components are returned: \eqn{\beta1X1},
-#'               (\eqn{\beta2X2+ \beta3X3}), \eqn{\epsilon}. Interactions are defined as usual, e.g.:
-#'               "x1:x2" (cuurently only second-order interactions are allowed).
+#'               (\eqn{\beta2X2+ \beta3X3}), \eqn{\epsilon}. Currently interactions aren't supported,
+#'               so the user should insert them manually.
 #' @param data a data frame with all the variables specified in X.list and y.
 #' @param wgt an optional vector of weights.
 #' @param comp.names an optional vector specifying name for each component.
@@ -24,7 +24,7 @@
 #' wage <- X %*% beta + rnorm(n)
 #' dat <- as.data.frame(cbind(wage, X))
 #' colnames(dat)[1] <- "wage"
-#' res <- linear_projection("wage", X.list = list("x1", c("x2", "x3"), "x2:x3"), data = dat)
+#' res <- linear_projection("wage", X.list = list("x1", c("x2", "x3")), data = dat)
 #' #each row is summed (up to a constant) to the standardized wage:
 #' stand_wage <- (wage - mean(wage)) / sd(wage)
 #' diff <- apply(res, 1, sum) - stand_wage
@@ -35,19 +35,39 @@
 linear_projection <- function(y, X.list, data, 
                               wgt = rep(1, nrow(data)),
                               comp.names = NULL){
+  n_obs <- nrow(data)
   dep_var <- ifelse(is.character(y), y, as.character(deparse(substitute(y))))
   #standradize y 
   data[,dep_var] <- standardize(data[,dep_var], wgt)
   all_x = unlist(X.list)
-  #create formula
-  indep_vars <- paste(all_x, collapse='+')
-  form <- as.formula(paste(dep_var, '~', indep_vars))
-  lin_model <- lm(formula = form, data = data, weights = wgt)
+  are_factor <- unlist(lapply(data[,all_x], is.factor)) #note that this cannot work with interactions (:)
+  if(any(are_factor)){
+    #prepare formula
+    num_var <- paste(all_x[!are_factor], collapse = "+")
+    cat_var <- paste(all_x[are_factor], collapse = "+")
+    indep_vars <- paste(num_var, cat_var, sep = " | ")
+    form <- as.formula(paste(dep_var, '~', indep_vars))
+    fe_model <- lfe::felm(form, data = data, weights = wgt)
+    epsilon <- fe_model$residuals
+    fe_table <- lfe::getfe(fe_model)
+    num_fe <- sum(are_factor)
+    fe_comp <- matrix(ncol = num_fe, nrow = n_obs) 
+    for(i in 1:num_fe){
+      x <- all_x[are_factor][i]
+      fe_comp[,i] <- fe_table[paste0(x, ".", data[, x]), "effect"]
+      fe_comp[,i] <- fe_comp[,i] - wtd.mean(fe_comp[,i], wgt)
+    }
+    colnames(fe_comp) <- all_x[are_factor]
+    #subtract fixed effects and project on other variables
+    data[,dep_var] <- data[,dep_var] - fe_model$r.residuals
+    all_comp <- get_terms(dep_var, all_x[!are_factor], data, wgt)$terms
+    all_comp <- cbind(all_comp, fe_comp)
+  } else {
+    terms_obj <- get_terms(dep_var, all_x, data, wgt)
+    all_comp <- terms_obj$terms
+    epsilon <- terms_obj$epsilon
+  }
   #aggregate components (according to X.list)
-  #note that here we already get centerd terms, so no normalization is needed. 
-  #(this is important cause later we calculate cov and its convenient that all variables are zero mean)
-  all_comp <- predict(lin_model, type = "term")
-  n_obs <- nrow(data)
   n_comp <- length(X.list)
   res <- matrix(nrow = n_obs, ncol = n_comp + 1)
   for(i in 1:n_comp){
@@ -55,7 +75,7 @@ linear_projection <- function(y, X.list, data,
     res[,i] <- apply(all_comp[,comp, drop = F], 1, sum)
   }
   #add epsilon (=residual)
-  res[,n_comp + 1] <- lin_model$residuals
+  res[,n_comp + 1] <- epsilon
   #add names
   if(!is.null(comp.names) & length(comp.names) == n_comp){
     colnames(res) <- c(comp.names, "epsilon")
@@ -64,6 +84,22 @@ linear_projection <- function(y, X.list, data,
   }
   return(res)
 }
+
+#estimates the model y ~ all_x and returns model terms + model residuals
+get_terms <- function(dep_var, all_x, data, wgt = rep(1, nrow(data))){
+  #create formula
+  indep_vars <- paste(all_x, collapse='+')
+  form <- as.formula(paste(dep_var, '~', indep_vars))
+  lin_model <- lm(formula = form, data = data, weights = wgt)
+  #note that here we already get centerd terms, so no normalization is needed. 
+  #(this is important cause later we calculate cov and its convenient that all variables are zero mean)
+  terms <- predict(lin_model, type = "term")
+  epsilon <- lin_model$residuals
+  return(list(terms = terms, epsilon = epsilon))
+}
+
+
+
 
 #create names from X.list object
 create_names <- function(X.list){
