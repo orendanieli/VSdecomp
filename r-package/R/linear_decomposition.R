@@ -12,9 +12,10 @@
 #'               so the user should insert them manually.
 #' @param data a data frame with all the variables specified in X.list and y.
 #' @param wgt an optional vector of weights.
+#' @param year an optional vector of years. if provided, the projection is done for each year separately.
 #' @param comp.names an optional vector specifying name for each component.
 #' @return a matrix with the (centered) components specified by X.list + residuals. Note that each row is summed (up to 
-#'         a constant) to the standardized version of y, and each column to 0.
+#'         a constant) to the standardized version of y, and each column to 0 (both by year).
 #' @examples
 #' #gen data
 #' n <- 1000
@@ -34,8 +35,26 @@
 
 linear_projection <- function(y, X.list, data, 
                               wgt = rep(1, nrow(data)),
-                              comp.names = NULL){
+                              year = rep(1, nrow(data)),
+                              comp.names = NULL){ 
   dep_var <- ifelse(is.character(y), y, as.character(deparse(substitute(y))))
+  year_val <- unique(year)
+  res <- matrix(nrow = nrow(data), ncol = length(X.list) + 1)
+  for(v in year_val){
+    ind <- year == v
+    res[ind,] <- get_comp(dep_var, X.list, data[ind,], wgt[ind])
+  }
+  #add names
+  if(!is.null(comp.names) & length(comp.names) == length(X.list)){
+    colnames(res) <- c(comp.names, "epsilon")
+  } else {
+    colnames(res) <- c(create_names(X.list), "epsilon")
+  }
+  return(res)
+}
+
+#this is the basic function that calculates the components. 
+get_comp <- function(dep_var, X.list, data, wgt){
   #standradize y 
   data[,dep_var] <- standardize(data[,dep_var], wgt)
   all_x <- unlist(X.list)
@@ -66,12 +85,6 @@ linear_projection <- function(y, X.list, data,
   }
   #add epsilon (=residual)
   res[,n_comp + 1] <- epsilon
-  #add names
-  if(!is.null(comp.names) & length(comp.names) == n_comp){
-    colnames(res) <- c(comp.names, "epsilon")
-  } else {
-    colnames(res) <- c(create_names(X.list), "epsilon")
-  }
   return(res)
 }
 

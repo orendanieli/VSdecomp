@@ -1,3 +1,4 @@
+#end documentation for plot, suumary and vs_decomp
 #replicate oren's results (for linear decomposition)
 
 #' Skewness and Variance Decomposition

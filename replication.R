@@ -53,8 +53,8 @@ plot(decomp_object, abs.terms = F)
 dat <- dat %>% mutate(ind = as.factor(ind),
                       occ = as.factor(occ))
 
-y_comp <- linear_projection(y = "log_hr_wage", X.list = list("race", "ind"), 
-                            data = dat, wgt = w) 
+y_comp <- linear_projection(y = "log_hr_wage", X.list = list("occ", "ind"), 
+                            data = dat, wgt = w, year = year) 
 
 decomp_object <- vs_decomp(X = y_comp, wgt = w, year = year)
 colnames(decomp_object$components)
@@ -63,7 +63,7 @@ colnames(decomp_object$components)
 #                     "3cov(epsilon^2,occ)"))                
   
 plot(decomp_object, 
-        plot.comp = c("3cov(epsilon^2,race)",
+        plot.comp = c("3cov(epsilon^2,occ)",
                      "3cov(epsilon^2,ind)"))    
   
   

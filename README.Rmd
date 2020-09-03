@@ -41,12 +41,20 @@ decomp_by_gender <- vs_decomp(y = dat$wage, X = variable,
 summary(decomp_by_gender)
 plot(decomp_by_gender)
 
-#skewness decomposition by more than one variable (a.k.a linear skewness decomposition):
-#first we need to decompose wage into its linear components
-#(check ?linear_projection )
+#skewness decomposition by more than one variable (=linear skewness decomposition):
+#first we need to decompose yearly wages into their linear components
+#(check ?linear_projection for more details):
 wage_linear_comp <- linear_projection(y = "wage", 
                                       X.list = list("men", "black"),
-                                      data = dat)
+                                      data = dat, year = dat$year)
+#using the linear components, we can calculate skewness decomposition:
+decomp_by_mult_var <- vs_decomp(X = wage_linear_comp, 
+                                year = dat$year)
+#up to 3 components can be summarized or plotted:
+colnames(decomp_by_mult_var$components)
+#let's take "3cov(epsilon^2,men)" and "3cov(epsilon^2,black)"
+summary(decomp_by_mult_var, sum.comp = c(7, 8))
+plot(decomp_by_mult_var, plot.comp = c(7, 8))
 ```
 
 ##References
