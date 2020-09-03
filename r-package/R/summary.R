@@ -6,6 +6,7 @@
 #'                  with component names or numeric with component indices. other
 #'                  components not specified by sum.comp are summed to one additional
 #'                  component. default is to summarize the first 3 components.
+#' @export
 
 summary.vs_decomp <- function(object, r = 3, sum.comp = NULL){
   comp <- object$components

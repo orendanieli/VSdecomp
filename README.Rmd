@@ -1,23 +1,27 @@
+---
+output: github_document
+---
 
-VSdecomp: Variance and Skewness Decomposition
-=============================================
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
 
-An R package that provides decomposition methods for the skewness or the variance of a variable (e.g., wage). by breaking distribution moments into independent components, users can analyze changes in distributions across time or between groups.
+#VSdecomp: Variance and Skewness Decomposition
 
-Installation
-------------
+An R package that provides decomposition methods for the skewness or the variance of a variable (e.g., wage). By breaking distribution moments into independent components, users can analyze changes in distributions across time or between groups.
+          
+
+##Installation
 
 Currently, only the GitHub version is available through:
-
-``` r
+```{r, message=FALSE, eval=FALSE}
 #install.packages("devtools")
 devtools::install_github("eladg9/VSdecomp/r-package")
 ```
 
-Usage Example
--------------
+##Usage Example
 
-``` r
+```{r, message=FALSE, eval=FALSE}
 library(VSdecomp)
 #generate data
 n <- 1000
@@ -45,5 +49,6 @@ wage_linear_comp <- linear_projection(y = "wage",
                                       data = dat)
 ```
 
-References
-----------
+##References
+
+

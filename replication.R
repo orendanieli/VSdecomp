@@ -2,6 +2,8 @@ library(data.table)
 library(tidyverse)
 library(Hmisc)
 drop_path <- "/Users/eladg/Dropbox/skewness/"
+office_path <- "C:/Users/eco116/Documents/sup matirials for vsdecomp/"
+dat <- fread(paste0(office_path, "full_data.csv"))
 dat <- fread(paste0(drop_path, "full_data.csv"))
 dat %>% glimpse()
 
@@ -51,18 +53,18 @@ plot(decomp_object, abs.terms = F)
 dat <- dat %>% mutate(ind = as.factor(ind),
                       occ = as.factor(occ))
 
-y_comp <- linear_projection(y = "log_hr_wage", X.list = list("occ", "ind"), 
+y_comp <- linear_projection(y = "log_hr_wage", X.list = list("race", "ind"), 
                             data = dat, wgt = w) 
 
 decomp_object <- vs_decomp(X = y_comp, wgt = w, year = year)
 colnames(decomp_object$components)
-summary(decomp_object, 
-        sum.comp = c("3cov(epsilon^2,ind)",
-                     "3cov(epsilon^2,occ)"))                
+#summary.vs_decomp(decomp_object, 
+#        sum.comp = c("3cov(epsilon^2,ind)",
+#                     "3cov(epsilon^2,occ)"))                
   
 plot(decomp_object, 
-        plot.comp = c("3cov(epsilon^2,ind)",
-                     "3cov(epsilon^2,occ)"))  
+        plot.comp = c("3cov(epsilon^2,race)",
+                     "3cov(epsilon^2,ind)"))    
   
   
 

@@ -1,5 +1,4 @@
-#fix bug in linear_decomp line 58 
-#replicate oren's results
+#replicate oren's results (for linear decomposition)
 
 #' Skewness and Variance Decomposition
 #'
