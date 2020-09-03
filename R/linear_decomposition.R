@@ -39,29 +39,38 @@ linear_projection <- function(y, X.list, data,
   dep_var <- ifelse(is.character(y), y, as.character(deparse(substitute(y))))
   #standradize y 
   data[,dep_var] <- standardize(data[,dep_var], wgt)
-  all_x = unlist(X.list)
-  are_factor <- unlist(lapply(data[,all_x], is.factor)) #note that this cannot work with interactions (:)
-  if(any(are_factor)){
+  all_x <- unlist(X.list)
+  are_factors <- unlist(lapply(data[,all_x], is.factor)) #note that this cannot work with interactions (:)
+  if(any(are_factors)){
     #prepare formula
-    num_var <- paste(all_x[!are_factor], collapse = "+")
-    cat_var <- paste(all_x[are_factor], collapse = "+")
+    num_var <- ifelse(all(are_factors), "0",
+                      paste(all_x[!are_factors], collapse = "+"))
+    cat_var <- paste(all_x[are_factors], collapse = "+")
     indep_vars <- paste(num_var, cat_var, sep = " | ")
     form <- as.formula(paste(dep_var, '~', indep_vars))
     fe_model <- lfe::felm(form, data = data, weights = wgt)
     epsilon <- fe_model$residuals
+    #get FE terms
     fe_table <- lfe::getfe(fe_model)
-    num_fe <- sum(are_factor)
+    num_fe <- sum(are_factors)
     fe_comp <- matrix(ncol = num_fe, nrow = n_obs) 
     for(i in 1:num_fe){
-      x <- all_x[are_factor][i]
-      fe_comp[,i] <- fe_table[paste0(x, ".", data[, x]), "effect"]
+      x <- all_x[are_factors][i]
+      left <- data[,x, drop = F]
+      right <- fe_table[fe_table[,"fe"] == x, c("effect", "idx")]
+      tmp <- keeping_order(left, merge, y = right, by.x = x, by.y = "idx")
+      fe_comp[,i] <- tmp$effect
       fe_comp[,i] <- fe_comp[,i] - wtd.mean(fe_comp[,i], wgt)
     }
-    colnames(fe_comp) <- all_x[are_factor]
-    #subtract fixed effects and project on other variables
-    data[,dep_var] <- data[,dep_var] - fe_model$r.residuals
-    all_comp <- get_terms(dep_var, all_x[!are_factor], data, wgt)$terms
-    all_comp <- cbind(all_comp, fe_comp)
+    colnames(fe_comp) <- all_x[are_factors]
+    if(!all(are_factors)){
+      #subtract fixed effects and project on other variables
+      data[,dep_var] <- data[,dep_var] - fe_model$r.residuals
+      all_comp <- get_terms(dep_var, all_x[!are_factors], data, wgt)$terms
+      all_comp <- cbind(all_comp, fe_comp)
+    } else {
+      all_comp <- fe_comp
+    }
   } else {
     terms_obj <- get_terms(dep_var, all_x, data, wgt)
     all_comp <- terms_obj$terms
@@ -99,7 +108,15 @@ get_terms <- function(dep_var, all_x, data, wgt = rep(1, nrow(data))){
 }
 
 
-
+keeping_order <- function(data, fn, ...) { 
+  col <- ".sortColumn"
+  data[,col] <- 1:nrow(data) 
+  out <- fn(data, ...) 
+  if (!col %in% colnames(out)) stop("Ordering column not preserved by function") 
+  out <- out[order(out[,col]),] 
+  out[,col] <- NULL 
+  out 
+} 
 
 #create names from X.list object
 create_names <- function(X.list){

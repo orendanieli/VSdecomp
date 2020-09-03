@@ -53,10 +53,16 @@ dat <- dat %>% mutate(ind = as.factor(ind),
 
 y_comp <- linear_projection(y = "log_hr_wage", X.list = list("occ", "ind"), 
                             data = dat, wgt = w) 
+
+decomp_object <- vs_decomp(X = y_comp, wgt = w, year = year)
+colnames(decomp_object$components)
+summary(decomp_object, 
+        sum.comp = c("3cov(epsilon^2,ind)",
+                     "3cov(epsilon^2,occ)"))                
   
-reg1 = lm(log_hr_wage ~ occ + ind, data = dat[1:100000,])
-reg2 = felm(log_hr_wage ~ occ + ind, data = dat[1:100000,])
-  
+plot(decomp_object, 
+        plot.comp = c("3cov(epsilon^2,ind)",
+                     "3cov(epsilon^2,occ)"))  
   
   
 

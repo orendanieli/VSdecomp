@@ -1,4 +1,4 @@
-#add felm to linear_projection
+#fix bug in linear_decomp line 58 
 #replicate oren's results
 
 #' Skewness and Variance Decomposition
