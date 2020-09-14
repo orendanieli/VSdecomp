@@ -12,6 +12,11 @@ dat <- dat %>%
        filter(!is.na(hr_wage) & hr_wage > 0 & hr_alloc == 0) %>%
        mutate(log_hr_wage = log(hr_wage))
 
+#drop uncomplete cases (this is not done in lunch1409)
+vars <- c("year","occ","log_hr_wage","wgt_hrs","educomp","exp","ind")
+dat <- dat %>% select(vars) 
+dat <- dat %>% filter(complete.cases(dat))
+
 #drop wages at top and bottom 5% (in each year) by setting their weight to 0 
 dat <- dat %>%  
        group_by(year) %>%
@@ -20,14 +25,13 @@ dat <- dat %>%
                                   TRUE ~ wgt_hrs)) %>%
        ungroup()
 
-
 #Figure 6: skewness of log hourly wages
 wtd_skew <- function(x, w){
   tmp <- (x - wtd.mean(x, w)) / sqrt(wtd.var(x, w))
   wtd.mean(tmp^3, w)
 }
 
-pdf(paste0(drop_path, "figure6.pdf"), width = 6, height = 4)
+#pdf(paste0(drop_path, "figure6.pdf"), width = 6, height = 4)
 dat %>% 
   group_by(year) %>%
   summarise(skew = wtd_skew(log_hr_wage, wgt_hrs)) %>%
@@ -37,8 +41,8 @@ dat %>%
   theme_bw() +
   geom_vline(xintercept = c(1991.5, 2002.5)) +
   ggtitle("Figure 6: skewness of log hourly wages")
-dev.off()
-#it's slightly different from the paper
+#dev.off()
+#this is slightly different from the paper
 
 #Figure 8: Skewness Decomposition by 3-Digit Occupation
 dat <- dat %>% filter(year >= 1992 & year <= 2002 & wgt_hrs > 0) 
@@ -48,7 +52,10 @@ w <- dat %>% pull(wgt_hrs)
 X <- dat %>% select(occ) %>% as.data.frame()
 decomp_object <- vs_decomp(y = y, X = X, year = year, wgt = w)  
 plot(decomp_object, abs.terms = F)  
-  
+
+#conc: raw components are the same as in lunch1409
+
+
 #Figure 25: Skewness Decomposition by Occupation and Industry 
 dat <- dat %>% mutate(ind = as.factor(ind),
                       occ = as.factor(occ))
@@ -64,9 +71,9 @@ colnames(decomp_object$components)
   
 plot(decomp_object, 
         plot.comp = c("3cov(epsilon^2,occ)",
-                     "3cov(epsilon^2,ind)"))    
+                     "3cov(epsilon^2,ind)"), abs.terms = F)    
   
-  
+#conc: raw components are the same as in lin_dec_occ_plus...
 
 
 
