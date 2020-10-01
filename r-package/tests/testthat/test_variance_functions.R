@@ -25,6 +25,16 @@ test_that("variance components are correct", {
                 abs(theo_between - between.var(ss)) < 0.01)
 })
 
+test_that("variance components are summed to overall variance", {
+  dat <- gen_data(10000)
+  ss <- suf_stat(y = dat$y,
+                 x = dat$x,
+                 wgt = dat$wgt)
+  summed_variance <- within.var(ss) + between.var(ss)
+  overall_variance <- wtd_var(dat$y, dat$wgt)
+  expect_true(abs(summed_variance - overall_variance) < 0.01)
+})
+
 #these tests are time-consuming, so preform them only while developing
 test_that("SE of the between component is correct", {
   if(skip){

@@ -3,6 +3,7 @@ library(VSdecomp)
 set.seed(43)
 skip = T
 
+#some useful functions
 gen_data <- function(n = 10000, for.var = F){
   if(for.var){
     wage_men <- rnorm(n/2, 0, 1)
@@ -19,6 +20,17 @@ gen_data <- function(n = 10000, for.var = F){
   return(res)
 }
 
+normalize <- function(x, w){
+  m <- wtd.mean(x, w)
+  s <- sqrt(wtd_var(x, w))
+  (x-m)/s
+}
+
+wtd_skew <- function(x, w){
+  x <- normalize(x, w)
+  wtd.mean(x^3, w)
+}
+
 test_that("skewness components are correct", {
   dat <- gen_data(100000)
   theo_within <- 2^1.5 * (sqrt(8) / 3)
@@ -33,6 +45,20 @@ test_that("skewness components are correct", {
   expect_true(abs(theo_within - within_pack) < 0.1 & 
               abs(theo_between - between_pack) < 0.1 &
               abs(theo_cov - cov_pack) < 0.1)
+})
+
+test_that("skewness components are summed to overall skewness", {
+  dat <- gen_data(10000)
+  ss <- suf_stat(y = dat$y,
+                 x = dat$x,
+                 wgt = dat$wgt)
+  within_pack <- within.skew(ss)
+  between_pack <- between.skew(ss)
+  cov_pack <- 3*cov.skew(ss)
+  sigma2 <- wtd_var(dat$y, dat$wgt)
+  overall_skew <- wtd_skew(dat$y, dat$wgt)
+  summed_skew <- (within_pack + between_pack + cov_pack) * sigma2^-1.5
+  expect_true(abs(overall_skew - summed_skew) < 0.1)
 })
 
 test_that("SE of the between component is correct", {
