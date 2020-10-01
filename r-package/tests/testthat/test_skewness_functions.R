@@ -3,7 +3,6 @@ library(VSdecomp)
 set.seed(43)
 skip = T
 
-#some useful functions
 gen_data <- function(n = 10000, for.var = F){
   if(for.var){
     wage_men <- rnorm(n/2, 0, 1)
@@ -18,17 +17,6 @@ gen_data <- function(n = 10000, for.var = F){
                     x = c(rep("women", n/2), rep("men", n/2)),
                     wgt = c(w_women, w_men))
   return(res)
-}
-
-normalize <- function(x, w){
-  m <- wtd.mean(x, w)
-  s <- sqrt(wtd_var(x, w))
-  (x-m)/s
-}
-
-wtd_skew <- function(x, w){
-  x <- normalize(x, w)
-  wtd.mean(x^3, w)
 }
 
 test_that("skewness components are correct", {

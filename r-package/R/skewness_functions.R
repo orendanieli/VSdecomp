@@ -95,9 +95,18 @@ skew_decomp <- function(y, x, wgt = rep(1, length(y))){
   return(res)
 }
 
-
-
-
+#' Weighted Skewness
+#' 
+#' computes weighted version of the skewness estimator.
+#' 
+#' @param x a numeric vector
+#' @param wgt an optional vector of weights.
+#' @return scalar
+#' @export
+wtd_skew <- function(x, wgt = rep(1, length(x))){
+  x <- (x - wtd.mean(x, wgt)) / sqrt(wtd_var(x, wgt))
+  wtd.mean(x^3, wgt)
+}
 
 
 
