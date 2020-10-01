@@ -4,7 +4,14 @@
 \alias{linear_projection}
 \title{Linear Projection}
 \usage{
-linear_projection(y, X.list, data, wgt = rep(1, nrow(data)), comp.names = NULL)
+linear_projection(
+  y,
+  X.list,
+  data,
+  wgt = rep(1, nrow(data)),
+  year = rep(1, nrow(data)),
+  comp.names = NULL
+)
 }
 \arguments{
 \item{y}{a character specifying the name of the outcome variable (e.g. "wage").
@@ -20,11 +27,13 @@ so the user should insert them manually.}
 
 \item{wgt}{an optional vector of weights.}
 
+\item{year}{an optional vector of years. if provided, the projection is done for each year separately.}
+
 \item{comp.names}{an optional vector specifying name for each component.}
 }
 \value{
 a matrix with the (centered) components specified by X.list + residuals. Note that each row is summed (up to
-a constant) to the standardized version of y, and each column to 0.
+a constant) to the standardized version of y, and each column to 0 (both by year).
 }
 \description{
 estimates the linear model \eqn{y = \beta*X + \epsilon} and returns its linear
