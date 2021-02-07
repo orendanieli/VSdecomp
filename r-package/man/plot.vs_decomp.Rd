@@ -4,10 +4,10 @@
 \alias{plot.vs_decomp}
 \title{Plot Method for 'vs_decomp' Objects}
 \usage{
-\method{plot}{vs_decomp}(object, plot.comp = NULL, fill.colors = NULL, abs.terms = T, ylim = NULL)
+\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, abs.terms = T, ...)
 }
 \arguments{
-\item{object}{a 'vs_decomp' object.}
+\item{x}{a 'vs_decomp' object.}
 
 \item{plot.comp}{a vector of up to 3 components to plot. can be either character
 with component names or numeric with component indices. other
@@ -18,6 +18,8 @@ component. default is to plot the first 3 components.}
 for more details.}
 
 \item{abs.terms}{whether to plot absolute terms. default is TRUE.}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \description{
 Plot Method for 'vs_decomp' Objects

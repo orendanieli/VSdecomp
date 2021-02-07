@@ -1,6 +1,6 @@
 #' Plot Method for 'vs_decomp' Objects 
 #'
-#' @param object a 'vs_decomp' object.
+#' @param x a 'vs_decomp' object.
 #' @param plot.comp a vector of up to 3 components to plot. can be either character 
 #'                  with component names or numeric with component indices. other
 #'                  components not specified by plot.comp are summed to one additional
@@ -8,14 +8,16 @@
 #' @param fill.colors colors to fill the areas. see \code{\link[ggplot2]{scale_fill_manual}}
 #'                    for more details.
 #' @param abs.terms whether to plot absolute terms. default is TRUE.
+#' @param ... further arguments passed to or from other methods.
 #' @importFrom ggplot2 ggplot aes geom_area theme scale_x_continuous
-#' theme_bw ylab xlab labs geom_line geom_point
+#' theme_bw ylab xlab labs geom_line geom_point scale_fill_manual
+#' @importFrom rlang .data
 #' @export
-plot.vs_decomp <- function(object, 
+plot.vs_decomp <- function(x, 
                            plot.comp = NULL,
                            fill.colors = NULL,
-                           abs.terms = T,
-                           ylim = NULL){
+                           abs.terms = T, ...){
+  object <- x
   comp <- object$components
   type <- object$type
   moment <- object$moment
@@ -49,15 +51,15 @@ plot.vs_decomp <- function(object,
     melted_diff$value <- abs(melted_diff$value)
     diff$total <- abs(diff$total)
   }
-  graph <- ggplot(melted_diff, aes(x=year, y=value)) +
-    geom_area(aes(fill = Component), col='black') + 
+  graph <- ggplot(melted_diff, aes(x=.data$year, y=.data$value)) +
+    geom_area(aes(fill = .data$Component), col='black') + 
     theme(legend.position="right") +
     scale_x_continuous(breaks = years_vec) +
     theme_bw()+
     ylab(label="Change") +
     xlab(label="") +
-    geom_line(data = diff, aes(year, total, linetype = leg_label), size = 1) +
-    geom_point(data = diff, aes(year, total, shape = leg_label), size = 2) +
+    geom_line(data = diff, aes(.data$year, .data$total, linetype = .data$leg_label), size = 1) +
+    geom_point(data = diff, aes(.data$year, .data$total, shape = .data$leg_label), size = 2) +
     labs(linetype="", shape="")
   if(!is.null(fill.colors)){
     graph <- graph + scale_fill_manual(values = fill.colors)

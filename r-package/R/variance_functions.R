@@ -1,7 +1,5 @@
-#' Calculates sufficient statistics for the variance decomposition
-#'
-#'
-#' @importFrom Hmisc wtd.mean 
+#Calculates sufficient statistics for the variance decomposition
+ 
 suf_stat <- function(y, x, wgt = rep(1, length(y)), moment = "skewness"){
   d <- data.frame(y, x, wgt)
   d$x <- as.factor(d$x)

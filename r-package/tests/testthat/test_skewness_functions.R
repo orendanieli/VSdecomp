@@ -1,7 +1,8 @@
-library(VSdecomp)
+cran_skip = TRUE #skip those tests when submitting to cran
 
+library(VSdecomp)
 set.seed(43)
-skip = T
+
 
 gen_data <- function(n = 10000, for.var = F){
   if(for.var){
@@ -50,9 +51,7 @@ test_that("skewness components are summed to overall skewness", {
 })
 
 test_that("SE of the between component is correct", {
-  if(skip){
-    return(TRUE)
-  }
+  skip_if(cran_skip)
   B <- 1000
   n <- 100000
   bet_vec <- rep(NA, B)
@@ -75,9 +74,7 @@ test_that("SE of the between component is correct", {
 })
 
 test_that("SE of the within component is correct", {
-  if(skip){
-    return(TRUE)
-  }
+  skip_if(cran_skip)
   B <- 1000
   n <- 100000
   bet_vec <- rep(NA, B)
@@ -101,9 +98,7 @@ test_that("SE of the within component is correct", {
 
 
 test_that("SE of the cov component is correct", {
-  if(skip){
-    return(TRUE)
-  }
+  skip_if(cran_skip)
   B <- 1000
   n <- 100000
   bet_vec <- rep(NA, B)

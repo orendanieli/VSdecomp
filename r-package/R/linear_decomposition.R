@@ -30,7 +30,7 @@
 #' stand_wage <- (wage - mean(wage)) / sd(wage)
 #' diff <- apply(res, 1, sum) - stand_wage
 #' summary(diff)
-
+#' @importFrom stats as.formula lm predict
 #' @export
 
 linear_projection <- function(y, X.list, data, 
@@ -100,6 +100,7 @@ get_terms <- function(dep_var, all_x, data, wgt = rep(1, nrow(data))){
   epsilon <- lin_model$residuals
   return(list(terms = terms, epsilon = epsilon))
 }
+
 
 #same as get_term but return only FE terms
 get_fe_terms <- function(dep_var, all_x, are_factors, data, wgt){

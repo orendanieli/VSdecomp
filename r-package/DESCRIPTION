@@ -1,11 +1,11 @@
 Package: VSdecomp
 Title: Variance and Skewness Decomposition
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
   person("Elad", "Guttman", role = c("aut", "cre"), email = "eladguttman@mail.tau.ac.il"),
   person("Oren", "Danieli", role = "aut"))
-Description: provides decomposition methods for the skewness or the variance of a variable (e.g., wage).
-             by breaking distribution moments into independent components, users can 
+Description: Provides decomposition methods for the skewness or the variance of a variable (e.g., wage).
+             By breaking distribution moments into independent components, users can 
              analyze changes in distributions across time or between groups.
 License: GPL-3
 Encoding: UTF-8
@@ -16,6 +16,7 @@ Imports:
     Hmisc,
     ggplot2,
     reshape,
-    lfe
+    lfe,
+    rlang
 Suggests: 
     testthat

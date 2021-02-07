@@ -102,6 +102,7 @@ skew_decomp <- function(y, x, wgt = rep(1, length(y))){
 #' @param x a numeric vector
 #' @param wgt an optional vector of weights.
 #' @return scalar
+#' @importFrom Hmisc wtd.mean
 #' @export
 wtd_skew <- function(x, wgt = rep(1, length(x))){
   x <- (x - wtd.mean(x, wgt)) / sqrt(wtd_var(x, wgt))

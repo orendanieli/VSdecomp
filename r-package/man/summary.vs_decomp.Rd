@@ -4,7 +4,7 @@
 \alias{summary.vs_decomp}
 \title{Summary Method for 'vs_decomp' Objects}
 \usage{
-\method{summary}{vs_decomp}(object, r = 3, sum.comp = NULL)
+\method{summary}{vs_decomp}(object, r = 3, sum.comp = NULL, ...)
 }
 \arguments{
 \item{object}{a 'vs_decomp' object.}
@@ -15,6 +15,8 @@
 with component names or numeric with component indices. other
 components not specified by sum.comp are summed to one additional
 component. default is to summarize the first 3 components.}
+
+\item{...}{further arguments passed to or from other methods.}
 }
 \description{
 Summary Method for 'vs_decomp' Objects
