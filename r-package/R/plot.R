@@ -46,7 +46,7 @@ plot.vs_decomp <- function(x,
   diff$total <- total
   diff$leg_label <- ifelse(moment == "variance", "Total Variance", "Total Skewness")
   colnames(melted_diff)[2] <- "Component"
-  #melted_diff$Component <- factor(melted_diff$Component, c("3Cov", "Within", "Between"))
+  melted_diff$Component <- factor(melted_diff$Component, c("3Cov", "Within", "Between"))
   if(abs.terms){
     melted_diff$value <- abs(melted_diff$value)
     diff$total <- abs(diff$total)
