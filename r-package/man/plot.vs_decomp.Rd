@@ -4,7 +4,7 @@
 \alias{plot.vs_decomp}
 \title{Plot Method for 'vs_decomp' Objects}
 \usage{
-\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, abs.terms = TRUE, ...)
+\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, abs.terms = FALSE, ...)
 }
 \arguments{
 \item{x}{a 'vs_decomp' object.}
