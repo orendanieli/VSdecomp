@@ -81,7 +81,7 @@ get_comp <- function(dep_var, X.list, data, wgt){
   res <- matrix(nrow = nrow(data), ncol = n_comp + 1)
   for(i in 1:n_comp){
     comp <- X.list[[i]]
-    res[,i] <- apply(all_comp[,comp, drop = F], 1, sum)
+    res[,i] <- apply(all_comp[,comp, drop = FALSE], 1, sum)
   }
   #add epsilon (=residual)
   res[,n_comp + 1] <- epsilon
@@ -117,7 +117,7 @@ get_fe_terms <- function(dep_var, all_x, are_factors, data, wgt){
   fe_terms <- matrix(ncol = num_fe, nrow = nrow(data)) 
   for(i in 1:num_fe){
     x <- all_x[are_factors][i]
-    left <- data[,x, drop = F]
+    left <- data[,x, drop = FALSE]
     right <- fe_table[fe_table[,"fe"] == x, c("effect", "idx")]
     tmp <- keeping_order(left, merge, y = right, by.x = x, by.y = "idx")
     fe_terms[,i] <- tmp$effect

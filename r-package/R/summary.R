@@ -7,6 +7,7 @@
 #'                  components not specified by sum.comp are summed to one additional
 #'                  component. default is to summarize the first 3 components.
 #' @param ... further arguments passed to or from other methods.
+#' @return No return value.
 #' @export
 
 summary.vs_decomp <- function(object, r = 3, sum.comp = NULL, ...){
@@ -48,13 +49,13 @@ summary.vs_decomp <- function(object, r = 3, sum.comp = NULL, ...){
         "Changes since base year: difference, (difference SE) and [share of total change]",
         "\n", "\n")
     comp_var <- object$components_se^2
-    base_var <- comp_var[1, ,drop = F]
+    base_var <- comp_var[1, ,drop = FALSE]
     diff_sd <- t(apply(comp_var, 1, function(x){sqrt(x + base_var)}))
     diff_sd <- round(diff_sd, r)
     #add ()
     diff_sd <- apply(diff_sd, c(1, 2), function(x){paste("(",x,")", sep = "")})
     #this is a nice trick to combine the matrices
-    output <- matrix(t(cbind(diff, diff_sd, comp_share)), ncol = col_num, byrow = T) 
+    output <- matrix(t(cbind(diff, diff_sd, comp_share)), ncol = col_num, byrow = TRUE) 
     colnames(output) <- col_names
     #create rownames by "pushing" c("", "") after each year
     rnames <- rownames(comp)
@@ -66,7 +67,7 @@ summary.vs_decomp <- function(object, r = 3, sum.comp = NULL, ...){
         "Changes since base year: difference and [share of total change]",
         "\n", "\n")
     #this is a nice trick to combine the matrices
-    output <- matrix(t(cbind(diff, comp_share)), ncol = col_num, byrow = T) 
+    output <- matrix(t(cbind(diff, comp_share)), ncol = col_num, byrow = TRUE) 
     colnames(output) <- col_names
     #create rownames by "pushing" c("", "") after each year
     rnames <- rownames(comp)

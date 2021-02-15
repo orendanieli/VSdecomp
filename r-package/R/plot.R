@@ -12,11 +12,12 @@
 #' @importFrom ggplot2 ggplot aes geom_area theme scale_x_continuous
 #' theme_bw ylab xlab labs geom_line geom_point scale_fill_manual
 #' @importFrom rlang .data
+#' @return A ggplot object containing all the relevant information for the plot.
 #' @export
 plot.vs_decomp <- function(x, 
                            plot.comp = NULL,
                            fill.colors = NULL,
-                           abs.terms = T, ...){
+                           abs.terms = TRUE, ...){
   object <- x
   comp <- object$components
   type <- object$type
@@ -35,7 +36,7 @@ plot.vs_decomp <- function(x,
       comp_names <- c("Between", "Within", "3Cov")
     }
   }
-  base_comp <- comp[1, ,drop = F]
+  base_comp <- comp[1, ,drop = FALSE]
   diff <- t(apply(comp, 1, function(x){x - base_comp}))
   total <- apply(diff, 1, sum)
   colnames(diff) <- comp_names

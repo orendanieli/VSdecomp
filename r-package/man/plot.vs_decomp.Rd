@@ -4,7 +4,7 @@
 \alias{plot.vs_decomp}
 \title{Plot Method for 'vs_decomp' Objects}
 \usage{
-\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, abs.terms = T, ...)
+\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, abs.terms = TRUE, ...)
 }
 \arguments{
 \item{x}{a 'vs_decomp' object.}
@@ -20,6 +20,9 @@ for more details.}
 \item{abs.terms}{whether to plot absolute terms. default is TRUE.}
 
 \item{...}{further arguments passed to or from other methods.}
+}
+\value{
+A ggplot object containing all the relevant information for the plot.
 }
 \description{
 Plot Method for 'vs_decomp' Objects

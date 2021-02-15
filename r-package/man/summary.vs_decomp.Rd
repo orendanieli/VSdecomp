@@ -18,6 +18,9 @@ component. default is to summarize the first 3 components.}
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+No return value.
+}
 \description{
 Summary Method for 'vs_decomp' Objects
 }
