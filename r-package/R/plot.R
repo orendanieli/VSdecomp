@@ -17,7 +17,7 @@
 plot.vs_decomp <- function(x, 
                            plot.comp = NULL,
                            fill.colors = NULL,
-                           abs.terms = TRUE, ...){
+                           abs.terms = FALSE, ...){
   object <- x
   comp <- object$components
   type <- object$type
