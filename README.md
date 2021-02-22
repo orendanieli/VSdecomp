@@ -2,12 +2,19 @@
 VSdecomp: Variance and Skewness Decomposition
 =============================================
 
+[![CRAN status](https://www.r-pkg.org/badges/version/VSdecomp)](https://cran.r-project.org/package=VSdecomp)
+
 An R package that provides decomposition methods for the skewness or the variance of a variable (e.g., wage). By breaking distribution moments into independent components, users can analyze changes in distributions across time or between groups.
 
 Installation
 ------------
 
-Currently, only the GitHub version is available through:
+You can install the stable version from CRAN:
+```{r, message=FALSE, eval=FALSE}
+install.packages("VSdecomp")
+```
+
+Or the development version from GitHub:
 
 ``` r
 #install.packages("devtools")
