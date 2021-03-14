@@ -7,7 +7,10 @@
 #'                  component. default is to plot the first 3 components.
 #' @param fill.colors colors to fill the areas. see \code{\link[ggplot2]{scale_fill_manual}}
 #'                    for more details.
-#' @param abs.terms whether to plot absolute terms. default is TRUE.
+#' @param trunc.negative whether to truncate negative values with 0. default is TRUE.
+#'                       this flag is necessary because \code{\link[ggplot2]{geom_area}},
+#'                       on which the function is based, does not work well with a combination of positive
+#'                       and negative values. 
 #' @param ... further arguments passed to or from other methods.
 #' @importFrom ggplot2 ggplot aes geom_area theme scale_x_continuous
 #' theme_bw ylab xlab labs geom_line geom_point scale_fill_manual
@@ -17,7 +20,7 @@
 plot.vs_decomp <- function(x, 
                            plot.comp = NULL,
                            fill.colors = NULL,
-                           abs.terms = FALSE, ...){
+                           trunc.negative = TRUE, ...){
   object <- x
   comp <- object$components
   type <- object$type
@@ -39,6 +42,10 @@ plot.vs_decomp <- function(x,
   base_comp <- comp[1, ,drop = FALSE]
   diff <- t(apply(comp, 1, function(x){x - base_comp}))
   total <- apply(diff, 1, sum)
+  if(trunc.negative){
+    #replace negative values with 0:
+    diff[diff < 0] = 0
+  }
   colnames(diff) <- comp_names
   diff <- as.data.frame(diff)
   years_vec <- as.integer(rownames(comp))

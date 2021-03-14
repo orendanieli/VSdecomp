@@ -4,7 +4,7 @@
 \alias{plot.vs_decomp}
 \title{Plot Method for 'vs_decomp' Objects}
 \usage{
-\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, abs.terms = FALSE, ...)
+\method{plot}{vs_decomp}(x, plot.comp = NULL, fill.colors = NULL, trunc.negative = TRUE, ...)
 }
 \arguments{
 \item{x}{a 'vs_decomp' object.}
@@ -17,7 +17,10 @@ component. default is to plot the first 3 components.}
 \item{fill.colors}{colors to fill the areas. see \code{\link[ggplot2]{scale_fill_manual}}
 for more details.}
 
-\item{abs.terms}{whether to plot absolute terms. default is TRUE.}
+\item{trunc.negative}{whether to truncate negative values with 0. default is TRUE.
+this flag is necessary because \code{\link[ggplot2]{geom_area}},
+on which the function is based, does not work well with a combination of positive
+and negative values.}
 
 \item{...}{further arguments passed to or from other methods.}
 }
