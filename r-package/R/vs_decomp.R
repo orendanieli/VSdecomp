@@ -1,4 +1,4 @@
-#end documentation for , suumary 
+#upload update to cran!!!!!
 
 #' Skewness and Variance Decomposition
 #'
