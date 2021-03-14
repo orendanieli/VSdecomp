@@ -68,6 +68,7 @@ plot.vs_decomp <- function(x,
   if(!is.null(fill.colors)){
     graph <- graph + scale_fill_manual(values = fill.colors)
   }
+  print(graph)
   graph
 }
 
