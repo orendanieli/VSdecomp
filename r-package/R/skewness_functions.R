@@ -90,8 +90,8 @@ skew_decomp <- function(y, x, wgt = rep(1, length(y))){
   cov <- 3*cov * sigma2^-1.5
   res <- c(between, within, cov, between_se,
            within_se, cov_se = cov_se)
-  names(res) <- c("between", "within", "3cov", "between_se",
-                  "within_se", "3cov_se")
+  names(res) <- c("between", "within", "3COV", "between_se",
+                  "within_se", "3COV_se")
   return(res)
 }
 

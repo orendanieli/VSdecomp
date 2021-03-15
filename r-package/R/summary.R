@@ -43,7 +43,7 @@ summary.vs_decomp <- function(object, r = 3, sum.comp = NULL, ...){
       col_names <- c("between", "within")
     } else {
       col_num <- 3
-      col_names <- c("between", "within", "3cov")
+      col_names <- c("between", "within", "3COV")
     }
     cat("\n", 
         "Changes since base year: difference, (difference SE) and [share of total change]",

@@ -36,7 +36,7 @@ plot.vs_decomp <- function(x,
     if(moment == "variance"){
       comp_names <- c("Between", "Within")
     } else {
-      comp_names <- c("Between", "Within", "3Cov")
+      comp_names <- c("Between", "Within", "3COV")
     }
   }
   base_comp <- comp[1, ,drop = FALSE]

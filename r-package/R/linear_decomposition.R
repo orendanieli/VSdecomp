@@ -177,7 +177,7 @@ linear_skew_decomp <- function(X, wgt = rep(1, nrow(X))){
   cov21 <- as.data.frame(cov21)
   #set names
   cov21_names <- apply(pair_comb, 2,
-                       function(pair){paste0("3cov(", X_names[pair[1]], 
+                       function(pair){paste0("3COV(", X_names[pair[1]], 
                                              "^2,", X_names[pair[2]], ")")})
   #3 first moments multiplication
   if (p > 2){
