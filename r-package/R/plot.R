@@ -4,7 +4,12 @@
 #' @param plot.comp a vector of up to 3 components to plot. can be either character 
 #'                  with component names or numeric with component indices. other
 #'                  components not specified by plot.comp are summed to one additional
-#'                  component. default is to plot the first 3 components.
+#'                  component. default is to plot the first 3 components. (relevant only for
+#'                  the linear decomposition).
+#' @param comp.labels a vector of the same length of `plot_comp`, 
+#'                   which provides the labels to be shown in the graph. default is
+#'                   to use the original component names. (relevant only for
+#'                  the linear decomposition).
 #' @param fill.colors colors to fill the areas. see \code{\link[ggplot2]{scale_fill_manual}}
 #'                    for more details.
 #' @param trunc.negative whether to truncate negative values with 0. default is TRUE.
@@ -19,6 +24,7 @@
 #' @export
 plot.vs_decomp <- function(x, 
                            plot.comp = NULL,
+                           comp.labels = NULL,
                            fill.colors = NULL,
                            trunc.negative = TRUE, ...){
   object <- x
@@ -32,6 +38,9 @@ plot.vs_decomp <- function(x,
   if(type == "linear"){
     comp <- pick_comp(comp, plot.comp)
     comp_names <- colnames(comp)
+    if(!is.null(comp.labels)){
+      comp_names[-length(comp_names)] = comp.labels
+    }
   } else {
     if(moment == "variance"){
       comp_names <- c("Between", "Within")
@@ -64,7 +73,7 @@ plot.vs_decomp <- function(x,
     xlab(label="") +
     geom_line(data = diff, aes(.data$year, .data$total, linetype = .data$leg_label), size = 1) +
     geom_point(data = diff, aes(.data$year, .data$total, shape = .data$leg_label), size = 2) +
-    labs(linetype="", shape="")
+    labs(linetype="", shape="") 
   if(!is.null(fill.colors)){
     graph <- graph + scale_fill_manual(values = fill.colors)
   }
