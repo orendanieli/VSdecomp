@@ -96,7 +96,11 @@ pick_comp <- function(comp.table, comp.list = NULL){
     if(is.numeric(comp.list)){
       comp_ind <- comp.list
     } else {
-      comp_ind <- which(colnames(comp.table) %in% comp.list)
+      comp_ind <- c(NULL)
+      #this is done this way in order to keep comp.list order
+      for(i in 1:length(comp.list)){
+        comp_ind = c(comp_ind, which(colnames(comp.table) == comp.list[i]))
+      }
     }
   }
   res <- comp.table[,comp_ind]
