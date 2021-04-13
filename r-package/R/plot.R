@@ -63,8 +63,11 @@ plot.vs_decomp <- function(x,
   diff$total <- total
   diff$leg_label <- ifelse(moment == "variance", "Total Variance", "Total Skewness")
   colnames(melted_diff)[2] <- "Component"
-  #melted_diff$Component <- factor(melted_diff$Component, c("3Cov", "Between", "Within"))
-  graph <- ggplot(melted_diff, aes(x=.data$year, y=.data$value)) +
+  if(type != "linear"){
+    #reorder 
+    melted_diff$Component <- factor(melted_diff$Component, levels = c("Within", "Between", "3COV"))
+  }
+    graph <- ggplot(melted_diff, aes(x=.data$year, y=.data$value)) +
     geom_area(aes(fill = .data$Component), col='black') + 
     theme(legend.position="right") +
     scale_x_continuous(breaks = years_vec) +
