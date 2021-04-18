@@ -19,10 +19,11 @@
 \item{plot.comp}{a vector of up to 3 components to plot. can be either character
 with component names or numeric with component indices. other
 components not specified by plot.comp are summed to one additional
-component. default is to plot the first 3 components. (relevant only for
-the linear decomposition).}
+component. default is to plot the first 3 components. another option
+is to additionally specify "all other terms" in order to control for the position
+of each component. (relevant only for the linear decomposition).}
 
-\item{comp.labels}{a vector of the same length of \code{plot_comp},
+\item{comp.labels}{a vector of the same length as \code{plot.comp},
 which provides the labels to be shown in the graph. default is
 to use the original component names. (relevant only for
 the linear decomposition).}

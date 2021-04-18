@@ -4,9 +4,10 @@
 #' @param plot.comp a vector of up to 3 components to plot. can be either character 
 #'                  with component names or numeric with component indices. other
 #'                  components not specified by plot.comp are summed to one additional
-#'                  component. default is to plot the first 3 components. (relevant only for
-#'                  the linear decomposition).
-#' @param comp.labels a vector of the same length of `plot_comp`, 
+#'                  component. default is to plot the first 3 components. another option
+#'                  is to additionally specify "all other terms" in order to control for the position 
+#'                  of each component. (relevant only for the linear decomposition).
+#' @param comp.labels a vector of the same length as `plot.comp`, 
 #'                   which provides the labels to be shown in the graph. default is
 #'                   to use the original component names. (relevant only for
 #'                  the linear decomposition).
@@ -35,12 +36,13 @@ plot.vs_decomp <- function(x,
   if(n <= 1){
     stop("plot.vs_decomp isn't available for only one year")
   } 
+  if((length(comp.labels) != length(plot.comp)) & (!is.null(comp.labels))){
+    stop("comp.labels and plot.comp should be the same length")
+  }
   if(type == "linear"){
-    comp <- pick_comp(comp, plot.comp)
-    comp_names <- colnames(comp)
-    if(!is.null(comp.labels)){
-      comp_names[-length(comp_names)] = comp.labels
-    }
+    tmp <- pick_comp(comp, plot.comp, comp.labels)
+    comp <- tmp$comp
+    comp_names <- tmp$names
   } else {
     if(moment == "variance"){
       comp_names <- c("Between", "Within")
@@ -87,12 +89,25 @@ plot.vs_decomp <- function(x,
 
 #this function picks up to 3 components and sums all other to one component called
 #"all other terms"
-pick_comp <- function(comp.table, comp.list = NULL){
+pick_comp <- function(comp.table, comp.list = NULL, comp.labels = NULL){
   if(is.null(comp.list)){
     comp_ind <- 1:3
     n <- 3
   } else {
+    #in case the user provided "all other terms", we want to add it at the
+    #same place as specified by the user. 
     n <- length(comp.list)
+    all_other_flag <- "all other terms" %in% comp.list
+    if(any(all_other_flag)){
+      all_other_pos <- which(all_other_flag)
+      comp.list <- comp.list[-all_other_pos]
+      n <- n - 1
+    } else {
+      all_other_pos <- n + 1
+      if(!is.null(comp.labels)){
+        comp.labels <- c(comp.labels, "all other terms")
+      }
+    }
     if(n > 3){
       stop("no more than 3 components are allowed")
     }
@@ -108,9 +123,18 @@ pick_comp <- function(comp.table, comp.list = NULL){
   }
   res <- comp.table[,comp_ind]
   all_other <- apply(comp.table[,-comp_ind], 1, sum)
-  res <- cbind(res, all_other)
-  colnames(res)[n + 1] <- "all other terms"
-  return(res)
+  #keep user order (or put all other term at the end)
+  if(all_other_pos == 1){
+    res <- cbind(all_other, res)
+  } else if(all_other_pos > n){
+    res <- cbind(res, all_other)
+  } else {
+    res <- cbind(res[,1:(all_other_pos-1)], all_other, res[,all_other_pos:n])
+  }
+  colnames(res)[all_other_pos] <- "all other terms"
+  output <- list(comp = res, 
+                 names = if(is.null(comp.labels)){colnames(res)} else {comp.labels})
+  return(output)
 }
 
 
