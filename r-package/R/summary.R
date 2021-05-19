@@ -15,7 +15,7 @@ summary.vs_decomp <- function(object, r = 3, sum.comp = NULL, ...){
   type <- object$type
   moment <- object$moment
   if(type == "linear"){
-    comp <- pick_comp(comp, sum.comp)
+    comp <- pick_comp(comp, sum.comp)$comp
     col_num <- ncol(comp)
     col_names <- colnames(comp)
   }

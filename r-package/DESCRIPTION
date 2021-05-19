@@ -1,15 +1,14 @@
 Package: VSdecomp
 Title: Variance and Skewness Decomposition
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
   person("Elad", "Guttman", role = c("aut", "cre"), email = "eladguttman@mail.tau.ac.il"),
   person("Oren", "Danieli", role = "aut"))
-Description: Provides decomposition methods for the skewness or the variance of a variable (e.g., wage).
+Description: Provides decomposition methods for the skewness or variance of a variable (e.g., wage).
              By breaking distribution moments into independent components, users can 
              analyze changes in distributions across time or between groups.
 License: GPL-3
 Encoding: UTF-8
-LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 Imports: 
