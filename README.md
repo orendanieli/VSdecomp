@@ -18,7 +18,7 @@ Or the development version from GitHub:
 
 ``` r
 #install.packages("devtools")
-devtools::install_github("eladg9/VSdecomp/r-package")
+devtools::install_github("orendanieli/VSdecomp/r-package")
 ```
 
 Usage Example
